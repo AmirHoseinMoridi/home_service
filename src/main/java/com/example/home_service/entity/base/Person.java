@@ -1,6 +1,6 @@
-package com.example.home_service.entity;
+package com.example.home_service.entity.base;
 
-import com.example.home_service.entity.base.BaseEntity;
+import com.example.home_service.entity.Address;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;

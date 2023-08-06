@@ -1,6 +1,5 @@
 package com.example.home_service.dto;
 
-
 import com.example.home_service.util.Regex;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -13,9 +12,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DutyDTO {
+public class ImageDto {
 
-    @NotBlank(message = "name is not valid !")
-    @Pattern(regexp = Regex.STRING_WITHOUT_NUMBER, message = "name is not valid !")
-    String name;
+    @NotBlank(message = "image path not valid !")
+    @Pattern(regexp = Regex.IMAGE_JPG, message = "image path is not valid")
+    String imagePath;
 }

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderDTO {
+public class OrderDto {
 
     @NotBlank(message = "email is not valid !")
     @Pattern(regexp = Regex.EMAIL, message = "email is not valid!")
@@ -34,5 +34,5 @@ public class OrderDTO {
     @FutureOrPresent(message = "suggested_date_for_start_work must be date in the future or present ")
     LocalDate suggestedDateForStartWork;
 
-    AddressDTO addressDTO;
+    AddressDto addressDto;
 }

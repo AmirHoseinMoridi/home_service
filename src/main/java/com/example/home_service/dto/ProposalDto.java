@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProposalDTO {
+public class ProposalDto {
 
     @NotNull(message = "suggestedPriceByExpert")
     @PositiveOrZero(message = "suggested_price_by_expert must be a positive number")

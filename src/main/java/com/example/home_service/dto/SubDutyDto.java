@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SubDutyDTO {
+public class SubDutyDto {
 
     @NotBlank(message = "name is not valid !")
     @Pattern(regexp = Regex.STRING_WITHOUT_NUMBER, message = "name can't have any digit")

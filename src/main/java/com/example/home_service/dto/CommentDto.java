@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Range;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CommentDTO {
+public class CommentDto {
 
     @NotNull(message = "point is null!")
     @Range(min = 0,max = 5 ,message = "point is out of range !")

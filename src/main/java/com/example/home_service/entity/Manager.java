@@ -1,5 +1,6 @@
 package com.example.home_service.entity;
 
+import com.example.home_service.entity.base.Person;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;

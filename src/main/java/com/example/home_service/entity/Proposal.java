@@ -20,7 +20,7 @@ import java.time.LocalTime;
 public class Proposal extends BaseEntity<Long> {
 
     @Column(name = "date_of_create", nullable = false)
-    LocalDate dateOFCreate;
+    LocalDate dateOfCreate;
 
     @Column(name = "suggested_price_by_expert", nullable = false, scale = 2)
     Double suggestedPriceByExpert;

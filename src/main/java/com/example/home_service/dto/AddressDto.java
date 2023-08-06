@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AddressDTO {
+public class AddressDto {
 
     @NotBlank(message = "city name is not valid !")
     String cityName;

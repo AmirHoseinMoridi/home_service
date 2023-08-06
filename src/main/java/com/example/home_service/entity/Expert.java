@@ -1,6 +1,7 @@
 package com.example.home_service.entity;
 
 
+import com.example.home_service.entity.base.Person;
 import com.example.home_service.entity.enumaration.ExpertStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

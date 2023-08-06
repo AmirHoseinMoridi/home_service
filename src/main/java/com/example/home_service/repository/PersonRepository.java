@@ -1,7 +1,7 @@
 package com.example.home_service.repository;
 
 import com.example.home_service.entity.Address;
-import com.example.home_service.entity.Person;
+import com.example.home_service.entity.base.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
