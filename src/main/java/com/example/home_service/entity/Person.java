@@ -1,5 +1,6 @@
 package com.example.home_service.entity;
 
+import com.example.home_service.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
@@ -36,13 +37,4 @@ public class Person extends BaseEntity<Long> {
 
     @ManyToOne
     Address address;
-
-    @Override
-    public String toString() {
-        return "{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
 }

@@ -2,15 +2,16 @@ package com.example.home_service.repository;
 
 
 import com.example.home_service.entity.AssignmentRequests;
+import com.example.home_service.entity.Expert;
+import com.example.home_service.entity.SubDuty;
 import com.example.home_service.entity.enumaration.RequestAction;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-import java.util.Optional;
 import java.util.Set;
 
-public interface AssignmentRequestsRepository extends JpaRepository<AssignmentRequests,Long> {
+public interface AssignmentRequestsRepository extends JpaRepository<AssignmentRequests, Long> {
     Set<AssignmentRequests> findByAction(RequestAction action);
 
-    //todo
-    Optional<Long> count(AssignmentRequests request);
+    boolean existsByExpertAndSubDutyAndAction(Expert expert, SubDuty subDuty, RequestAction action);
 }

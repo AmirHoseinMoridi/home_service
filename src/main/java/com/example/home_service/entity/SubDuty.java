@@ -1,5 +1,6 @@
 package com.example.home_service.entity;
 
+import com.example.home_service.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
@@ -47,10 +48,4 @@ public class SubDuty extends BaseEntity<Long> {
         return experts.remove(expert);
     }
 
-    @Override
-    public String toString() {
-        return "{" +
-                "name='" + name + '\'' +
-                '}';
-    }
 }

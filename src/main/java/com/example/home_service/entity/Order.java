@@ -1,5 +1,6 @@
 package com.example.home_service.entity;
 
+import com.example.home_service.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

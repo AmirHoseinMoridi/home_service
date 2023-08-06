@@ -1,10 +1,10 @@
 package com.example.home_service.util;
 
-import ir.maktab.entity.Expert;
-import ir.maktab.entity.enumaration.ExpertStatus;
-import ir.maktab.exception.ExpertAccessException;
-import ir.maktab.exception.ImageNotFoundException;
-import ir.maktab.exception.ImageSizeOutOfRangeException;
+import com.example.home_service.entity.Expert;
+import com.example.home_service.entity.enumaration.ExpertStatus;
+import com.example.home_service.exception.ExpertAccessException;
+import com.example.home_service.exception.ImageNotFoundException;
+import com.example.home_service.exception.ImageSizeOutOfRangeException;
 import jakarta.validation.*;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 

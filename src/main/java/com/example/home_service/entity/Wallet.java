@@ -1,5 +1,6 @@
 package com.example.home_service.entity;
 
+import com.example.home_service.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
@@ -17,5 +18,4 @@ public class Wallet extends BaseEntity<Long> {
 
     @Column(nullable = false, scale = 1)
     Double balance = 0.0;
-
 }

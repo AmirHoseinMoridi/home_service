@@ -1,5 +1,6 @@
 package com.example.home_service.entity;
 
+import com.example.home_service.entity.base.BaseEntity;
 import com.example.home_service.entity.enumaration.RequestAction;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
@@ -30,15 +32,4 @@ public class AssignmentRequests extends BaseEntity<Long> {
 
     @ManyToOne
     SubDuty subDuty;
-
-    @Override
-    public String toString() {
-        return "{" +
-                "id=" + getId() +
-                ", isActive=" + isActive +
-                ", action=" + action +
-                ", expert=" + expert +
-                ", subDuty=" + subDuty +
-                '}';
-    }
 }

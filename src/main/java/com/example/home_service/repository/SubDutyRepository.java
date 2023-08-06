@@ -4,6 +4,7 @@ import com.example.home_service.entity.Duty;
 import com.example.home_service.entity.Expert;
 import com.example.home_service.entity.SubDuty;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 import java.util.Set;
@@ -14,7 +15,7 @@ public interface SubDutyRepository extends JpaRepository<SubDuty,Long> {
 
     Set<SubDuty> findByDuty(Duty duty);
 
-    //todo
+    @Query(value = "select s from SubDuty s where :expert member of s.experts")
     Set<SubDuty> findByExpert(Expert expert);
 
 }

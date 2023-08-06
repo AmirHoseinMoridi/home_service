@@ -1,4 +1,4 @@
-package com.example.home_service.entity;
+package com.example.home_service.entity.base;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
