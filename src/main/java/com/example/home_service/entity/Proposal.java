@@ -31,6 +31,8 @@ public class Proposal extends BaseEntity<Long> {
     @Column(name = "duration_of_work", nullable = false)
     LocalTime durationOfWork;
 
+
+    //todo
     @Enumerated(value = EnumType.STRING)
     ProposalStatus status = ProposalStatus.WAITING;
 

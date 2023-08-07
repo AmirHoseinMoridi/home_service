@@ -17,5 +17,5 @@ import lombok.experimental.FieldDefaults;
 public class Wallet extends BaseEntity<Long> {
 
     @Column(nullable = false, scale = 1)
-    Double balance = 0.0;
+    Double balance;
 }
