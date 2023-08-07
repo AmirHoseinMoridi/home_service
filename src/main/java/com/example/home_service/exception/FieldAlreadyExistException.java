@@ -1,6 +1,6 @@
 package com.example.home_service.exception;
 
-public class FieldAlreadyExistException extends Exception{
+public class FieldAlreadyExistException extends RuntimeException{
     public FieldAlreadyExistException() {
     }
 

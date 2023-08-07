@@ -17,6 +17,8 @@ public interface Mapper {
     CommentDto commentToDto(Comment comment);
     Duty dtoToDuty(DutyDto dutyDto);
     DutyDto dutyToDto(Duty duty);
+    SubDutyDto subDutyToDto(SubDuty subDuty);
+    SubDuty dtoToSubDuty(SubDutyDto subDutyDto);
     Expert dtoToExpert(ExpertRequestDto expertRequestDto);
     ExpertResultDto expertToDto(Expert expert);
     OrderDto orderToDto(Order order);

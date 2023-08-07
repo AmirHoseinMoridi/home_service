@@ -1,6 +1,6 @@
 package com.example.home_service.exception;
 
-public class FieldNotFoundException extends Exception{
+public class FieldNotFoundException extends RuntimeException{
     public FieldNotFoundException() {
     }
 

@@ -1,6 +1,6 @@
 package com.example.home_service.exception;
 
-public class EnumNotFoundException extends Exception {
+public class EnumNotFoundException extends RuntimeException {
     public EnumNotFoundException() {
     }
 
