@@ -9,6 +9,7 @@ import com.example.home_service.exception.FieldAlreadyExistException;
 import com.example.home_service.repository.AssignmentRequestsRepository;
 import com.example.home_service.service.AssignmentRequestsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -16,11 +17,12 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
-@RequiredArgsConstructor
 public class AssignmentRequestsServiceImpl implements AssignmentRequestsService {
     private final AssignmentRequestsRepository repository;
-
-
+    @Autowired
+    public AssignmentRequestsServiceImpl(AssignmentRequestsRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Optional<AssignmentRequests> findById(Long id) {

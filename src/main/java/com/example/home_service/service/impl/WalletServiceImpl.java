@@ -3,15 +3,18 @@ package com.example.home_service.service.impl;
 import com.example.home_service.entity.Wallet;
 import com.example.home_service.repository.WalletRepository;
 import com.example.home_service.service.WalletService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
-    WalletRepository repository;
+    private final WalletRepository repository;
+
+    @Autowired
+    public WalletServiceImpl(WalletRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Wallet createWallet() {

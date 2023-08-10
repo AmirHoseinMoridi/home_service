@@ -17,5 +17,5 @@ public class CustomerResultDto {
     String lastName;
     String email;
     LocalDate dateOfSignUp;
-    AddressDto addressDto;
+    AddressDto address;
 }

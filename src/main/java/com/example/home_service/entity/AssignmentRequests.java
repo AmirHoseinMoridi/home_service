@@ -16,8 +16,7 @@ import org.hibernate.annotations.Where;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
-@Table(name = "assignment_requests")
-@Where(clause = "isActive = true")
+@Where(clause = "is_active = true")
 public class AssignmentRequests extends BaseEntity<Long> {
 
     @Column(nullable = false)

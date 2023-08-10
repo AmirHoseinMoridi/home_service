@@ -16,23 +16,30 @@ import com.example.home_service.repository.CustomerRepository;
 import com.example.home_service.service.CustomerService;
 import com.example.home_service.service.ServiceRegistry;
 import com.example.home_service.util.Checker;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 @Component
-@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
 
     private final CustomerRepository repository;
+    private final ServiceRegistry serviceRegistry;
     private final Mapper mapper;
-
+    @Autowired
+    public CustomerServiceImpl(CustomerRepository repository, ServiceRegistry serviceRegistry, Mapper mapper) {
+        this.repository = repository;
+        this.serviceRegistry = serviceRegistry;
+        this.mapper = mapper;
+    }
 
     @Transactional
     @Override
@@ -40,28 +47,25 @@ public class CustomerServiceImpl implements CustomerService {
         try {
             Checker.checkValidation(customerRequestDto);
             Customer customer = mapper.dtoToCustomer(customerRequestDto);
-            Address address = ServiceRegistry.addressService().save(customerRequestDto.getAddress());
-            assert customer != null;
+
+            Optional<Customer> optionalCustomer = repository.findByEmail(customer.getEmail());
+            if (optionalCustomer.isPresent()) {
+                throw new FieldAlreadyExistException("this email is already exist !");
+            }
+
+            Address address = serviceRegistry.addressService().save(customerRequestDto.getAddress());
+            Wallet wallet = serviceRegistry.walletService().createWallet();
+
+            customer.setWallet(wallet);
+            customer.setDateOfSignUp(LocalDate.now());
             customer.setAddress(address);
-            save(customer);
-        } catch (Exception e) {
+
+            repository.save(customer);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
 
-    private Customer save(Customer customer) throws FieldAlreadyExistException {
-
-        Optional<Customer> optionalCustomer = repository.findByEmail(customer.getEmail());
-
-        if (optionalCustomer.isPresent()) {
-            throw new FieldAlreadyExistException("this email is already exist !");
-        }
-        Wallet wallet = ServiceRegistry.walletService().createWallet();
-
-        customer.setWallet(wallet);
-        return repository.save(customer);
-
-    }
 
     @Transactional()
     @Override
@@ -74,7 +78,7 @@ public class CustomerServiceImpl implements CustomerService {
             );
             customer.setPassword(newPassword.getPassword());
             repository.save(customer);
-        }catch (Exception e){
+        }catch (RuntimeException e){
             e.printStackTrace();
         }
     }
@@ -86,7 +90,7 @@ public class CustomerServiceImpl implements CustomerService {
             Customer customer = findByEmailAndPassword(request.getEmail(), request.getPassword());
             WalletDto walletDTO = mapper.walletToDto(customer.getWallet());
             return Optional.ofNullable(walletDTO);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
             return Optional.empty();
         }
@@ -111,7 +115,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     private Customer findByEmailAndPassword(String email, String password)
             throws FieldNotFoundException, WrongPasswordException {
-
 
         Customer customer = findByEmail(email);
         if (!customer.getPassword().equals(password)) {

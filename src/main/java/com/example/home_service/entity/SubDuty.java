@@ -19,7 +19,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
-@Where(clause = "isActive = true")
+@Where(clause = "is_active = true")
 public class SubDuty extends BaseEntity<Long> {
 
 

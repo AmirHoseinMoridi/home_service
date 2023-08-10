@@ -14,25 +14,30 @@ import com.example.home_service.repository.ExpertRepository;
 import com.example.home_service.service.ExpertService;
 import com.example.home_service.service.ServiceRegistry;
 import com.example.home_service.util.Checker;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.NoResultException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Component
-@RequiredArgsConstructor
 public class ExpertServiceImpl implements ExpertService {
 
     private final ExpertRepository repository;
+    private final ServiceRegistry serviceRegistry;
     private final Mapper mapper;
 
     private final ImageMapper imageMapper = new ImageMapperImpl();
+    @Autowired
+    public ExpertServiceImpl(ExpertRepository repository, ServiceRegistry serviceRegistry, Mapper mapper) {
+        this.repository = repository;
+        this.serviceRegistry = serviceRegistry;
+        this.mapper = mapper;
+    }
 
     @Transactional
     @Override
@@ -40,34 +45,36 @@ public class ExpertServiceImpl implements ExpertService {
         try {
             Checker.checkValidation(expertRequestDTO);
             save(expertRequestDTO);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
-
         }
     }
 
 
     private Expert save(ExpertRequestDto expertRequestDTO)
-            throws ValidationException, ImageNotFoundException,
-            ImageSizeOutOfRangeException, FieldAlreadyExistException {
+            throws ImageNotFoundException,ImageSizeOutOfRangeException, FieldAlreadyExistException {
 
         Optional<Expert> optionalExpert = repository.findByEmail(expertRequestDTO.getEmail());
         if (optionalExpert.isPresent()) {
             throw new FieldAlreadyExistException("this email is already exist !");
         }
-
         Expert expert = mapper.dtoToExpert(expertRequestDTO);
-        Image image = ServiceRegistry.imageService().save(expertRequestDTO.getImageDTO());
-        Address address = ServiceRegistry.addressService().save(expertRequestDTO.getAddress());
-        Wallet wallet = ServiceRegistry.walletService().createWallet();
+        Image image = serviceRegistry.imageService().save(expertRequestDTO.getImageDTO());
+        Address address = serviceRegistry.addressService().save(expertRequestDTO.getAddress());
+        Wallet wallet = serviceRegistry.walletService().createWallet();
+        Expert filledExpert = fillExpert(expert, image, address, wallet);
+        return repository.save(filledExpert);
+    }
 
+
+    private Expert fillExpert(Expert expert, Image image, Address address, Wallet wallet){
         expert.setAddress(address);
         expert.setImage(image);
         expert.setWallet(wallet);
         expert.setStatus(ExpertStatus.AWAITING_CONFIRMATION);
         expert.setDateOfSignUp(LocalDate.now());
         expert.setPoint(0.0);
-        return repository.save(expert);
+        return expert;
     }
 
 
@@ -79,10 +86,11 @@ public class ExpertServiceImpl implements ExpertService {
             Expert expert = findByEmailAndPassword(emailAndPassword);
             expert.setPassword(newPassword.getPassword());
             repository.save(expert);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
+
 
     @Transactional
     @Override
@@ -91,13 +99,24 @@ public class ExpertServiceImpl implements ExpertService {
             Expert expert = findByEmailAndPassword(emailAndPassword);
             Checker.checkExpertsAccess(expert);
 
-            SubDuty subDuty = ServiceRegistry.subDutyService().findByName(subDutyName);
+            SubDuty subDuty = serviceRegistry.subDutyService().findByName(subDutyName);
             checkRangeOfDuty(expert, subDuty);
             createAssignmentRequest(expert, subDuty, RequestAction.ADD);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
+
+    private void checkRangeOfDuty(Expert expert, SubDuty subDuty) throws DutyOutOfRangeException {
+        Set<SubDuty> expertSubDuties = serviceRegistry.subDutyService().findByExpert(expert);
+        if (!expertSubDuties.isEmpty()) {
+            SubDuty firstSubDuty = expertSubDuties.stream().findFirst().get();
+            if (!firstSubDuty.getDuty().equals(subDuty.getDuty())) {
+                throw new DutyOutOfRangeException("this subDuty is not in range of this experts duty");
+            }
+        }
+    }
+
 
     @Transactional
     @Override
@@ -105,13 +124,13 @@ public class ExpertServiceImpl implements ExpertService {
         try {
             Expert expert = findByEmailAndPassword(emailAndPassword);
             Checker.checkExpertsAccess(expert);
-            SubDuty subDuty = ServiceRegistry.subDutyService().findByName(subDutyName);
-            Set<SubDuty> expertsSubDuties = ServiceRegistry.subDutyService().findByExpert(expert);
+            SubDuty subDuty = serviceRegistry.subDutyService().findByName(subDutyName);
+            Set<SubDuty> expertsSubDuties = serviceRegistry.subDutyService().findByExpert(expert);
 
             if (expertsSubDuties.contains(subDuty)) {
                 createAssignmentRequest(expert, subDuty, RequestAction.REMOVE);
             } else throw new FieldNotFoundException("this sub duty is not exists in expert's sub duties !");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
@@ -122,11 +141,12 @@ public class ExpertServiceImpl implements ExpertService {
             Expert expert = findByEmailAndPassword(emailAndPassword);
             WalletDto walletDTO = mapper.walletToDto(expert.getWallet());
             return Optional.ofNullable(walletDTO);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
             return Optional.empty();
         }
     }
+
 
     @Override
     public Set<ExpertResultDto> findAll() throws ImageNotFoundException {
@@ -137,6 +157,7 @@ public class ExpertServiceImpl implements ExpertService {
         return results;
     }
 
+
     @Override
     public Set<ExpertResultDto> findByStatus(ExpertStatus expertStatus) {
         try {
@@ -145,11 +166,12 @@ public class ExpertServiceImpl implements ExpertService {
                     expert -> responses.add(mapper.expertToDto(expert))
             );
             return responses;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
             return new HashSet<>();
         }
     }
+
 
     @Transactional
     @Override
@@ -158,7 +180,7 @@ public class ExpertServiceImpl implements ExpertService {
             Expert expert = findByEmail(expertEmail);
             expert.setStatus(ExpertStatus.ACCEPTED);
             repository.save(expert);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
@@ -189,17 +211,6 @@ public class ExpertServiceImpl implements ExpertService {
                 .action(action)
                 .isActive(true)
                 .build();
-        ServiceRegistry.assignmentRequestsService().save(assignmentRequests);
+        serviceRegistry.assignmentRequestsService().save(assignmentRequests);
     }
-
-    private void checkRangeOfDuty(Expert expert, SubDuty subDuty) throws DutyOutOfRangeException {
-        Set<SubDuty> expertSubDuties = ServiceRegistry.subDutyService().findByExpert(expert);
-        if (!expertSubDuties.isEmpty()) {
-            SubDuty firstSubDuty = expertSubDuties.stream().findFirst().get();
-            if (!firstSubDuty.getDuty().equals(subDuty.getDuty())) {
-                throw new DutyOutOfRangeException("this subDuty is not in range of this experts duty");
-            }
-        }
-    }
-
 }

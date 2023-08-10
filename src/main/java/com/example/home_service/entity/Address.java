@@ -16,15 +16,15 @@ import lombok.experimental.FieldDefaults;
 @Entity
 public class Address extends BaseEntity<Long> {
 
-    @Column(name = "city_name", nullable = false)
+    @Column( nullable = false)
     String cityName;
 
-    @Column(name = "street_name", nullable = false)
+    @Column( nullable = false)
     String streetName;
 
     @Column(nullable = false)
     String apartment;
 
-    @Column(name = "postal_code", nullable = false)
+    @Column( nullable = false)
     String postalCode;
 }

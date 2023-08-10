@@ -14,7 +14,8 @@ import com.example.home_service.service.ServiceRegistry;
 import com.example.home_service.service.SubDutyService;
 import com.example.home_service.util.Checker;
 import jakarta.persistence.NoResultException;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -24,49 +25,38 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
-@RequiredArgsConstructor
 public class SubDutyServiceImpl implements SubDutyService {
     private final SubDutyRepository repository;
+    private final ServiceRegistry serviceRegistry;
     private final Mapper mapper;
+
+    @Autowired
+    public SubDutyServiceImpl(SubDutyRepository repository, ServiceRegistry serviceRegistry, Mapper mapper) {
+        this.repository = repository;
+        this.serviceRegistry = serviceRegistry;
+        this.mapper = mapper;
+    }
 
     @Transactional
     @Override
     public void create(SubDutyDto subDutyDto, DutyDto dutyDto) {
         try {
             Checker.checkValidation(dutyDto);
-            Optional<SubDuty> optionalSubDuty = save(subDutyDto);
-
-            if (optionalSubDuty.isPresent()) {
-                Duty duty = ServiceRegistry.dutyService().findByName(dutyDto.getName());
-                SubDuty subDuty = optionalSubDuty.get();
-                subDuty.setDuty(duty);
-                repository.save(subDuty);
-            } else {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            boolean isExists = repository.existsByName(subDutyDto.getName());
+            if (isExists) {
+                throw new FieldAlreadyExistException("sub duty already exist !");
             }
-        } catch (Exception e) {
+            Duty duty = serviceRegistry.dutyService().findByName(dutyDto.getName());
+            SubDuty subDuty = mapper.dtoToSubDuty(subDutyDto);
+            subDuty.setIsActive(true);
+            subDuty.setDuty(duty);
+            repository.save(subDuty);
+
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
 
-
-    private Optional<SubDuty> save(SubDutyDto subDutyDto)
-            throws FieldAlreadyExistException, ValidationException {
-
-        try {
-            Checker.checkValidation(subDutyDto);
-            Optional<SubDuty> optionalSubDuty = repository.findByName(subDutyDto.getName());
-            if (optionalSubDuty.isPresent()) {
-                throw new FieldAlreadyExistException("sub duty already exist !");
-            }
-            SubDuty subDuty = mapper.dtoToSubDuty(subDutyDto);
-            subDuty.setIsActive(true);
-            repository.save(subDuty);
-            return Optional.of(subDuty);
-        } catch (NoResultException ignored) {
-            return Optional.empty();
-        }
-    }
 
 
     @Transactional
@@ -78,7 +68,7 @@ public class SubDutyServiceImpl implements SubDutyService {
             subDuty.setPrice(subDutyDto.getPrice());
             subDuty.setDescription(subDutyDto.getDescription());
             repository.save(subDuty);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
@@ -89,7 +79,7 @@ public class SubDutyServiceImpl implements SubDutyService {
     public void remove(String subDutyName) {
         try {
             editStatus(subDutyName);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
@@ -117,11 +107,11 @@ public class SubDutyServiceImpl implements SubDutyService {
         try {
             Checker.checkValidation(dutyDTO);
             Set<SubDutyDto> responses = new HashSet<>();
-            Duty duty = ServiceRegistry.dutyService().findByName(dutyDTO.getName());
+            Duty duty = serviceRegistry.dutyService().findByName(dutyDTO.getName());
             Set<SubDuty> subDuties = repository.findByDuty(duty);
             subDuties.forEach(subDuty -> responses.add(mapper.subDutyToDto(subDuty)));
             return responses;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
             return new HashSet<>();
         }
@@ -130,14 +120,10 @@ public class SubDutyServiceImpl implements SubDutyService {
 
     @Override
     public SubDuty findByName(String name) throws FieldNotFoundException {
-        try {
-            Optional<SubDuty> optionalSubDuty = repository.findByName(name);
-            if (optionalSubDuty.isPresent()) {
-                return optionalSubDuty.get();
-            } else throw new FieldNotFoundException("sub duty is not exist");
-        } catch (NoResultException ignored) {
-            throw new FieldNotFoundException("sub duty is not exist");
-        }
+        Optional<SubDuty> optionalSubDuty = repository.findByName(name);
+        if (optionalSubDuty.isPresent()) {
+            return optionalSubDuty.get();
+        } else throw new FieldNotFoundException("sub duty is not exist");
     }
 
     @Override
@@ -154,7 +140,7 @@ public class SubDutyServiceImpl implements SubDutyService {
     @Override
     public void addExpertToSubDuty(Long assignmentRequestsId) {
         try {
-            Optional<AssignmentRequests> optionalRequest = ServiceRegistry.assignmentRequestsService()
+            Optional<AssignmentRequests> optionalRequest = serviceRegistry.assignmentRequestsService()
                     .findById(assignmentRequestsId);
             if (optionalRequest.isEmpty()) {
                 throw new FieldNotFoundException("AssignmentRequests is not exists !");
@@ -171,8 +157,8 @@ public class SubDutyServiceImpl implements SubDutyService {
             subDuty.addExpert(expert);
             repository.save(subDuty);
 
-            ServiceRegistry.assignmentRequestsService().remove(request);
-        } catch (Exception e) {
+            serviceRegistry.assignmentRequestsService().remove(request);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }
@@ -181,7 +167,7 @@ public class SubDutyServiceImpl implements SubDutyService {
     @Override
     public void removeExpertFromSubDuty(Long assignmentRequestsId) {
         try {
-            Optional<AssignmentRequests> optional = ServiceRegistry.assignmentRequestsService()
+            Optional<AssignmentRequests> optional = serviceRegistry.assignmentRequestsService()
                     .findById(assignmentRequestsId);
             if (optional.isEmpty()) {
                 throw new FieldNotFoundException("AssignmentRequests is not exists !");
@@ -196,13 +182,13 @@ public class SubDutyServiceImpl implements SubDutyService {
             Expert expert = request.getExpert();
             SubDuty subDuty = request.getSubDuty();
             boolean isRemoved = subDuty.removeExpert(expert);
-            ServiceRegistry.assignmentRequestsService().remove(request);
+            serviceRegistry.assignmentRequestsService().remove(request);
             if (isRemoved) {
                 repository.save(subDuty);
             } else {
                 throw new FieldNotFoundException("this sub duty is not in this expert's sub duties !");
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }

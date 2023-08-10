@@ -21,10 +21,8 @@ public class Order extends BaseEntity<Long> {
     @Column(nullable = false)
     String description;
 
-    @Column(name = "suggested_price_by_customer")
     Double suggestedPriceByCustomer;
 
-    @Column(name = "suggested_date_for_start_work")
     LocalDate suggestedDateForStartWork;
 
     @ManyToOne

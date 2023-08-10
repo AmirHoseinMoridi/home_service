@@ -10,8 +10,7 @@ import com.example.home_service.repository.DutyRepository;
 import com.example.home_service.service.DutyService;
 import com.example.home_service.service.ServiceRegistry;
 import com.example.home_service.util.Checker;
-import jakarta.persistence.NoResultException;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +19,18 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
-@RequiredArgsConstructor
+
 public class DutyServiceImpl implements DutyService {
     private final DutyRepository repository;
+    private final ServiceRegistry serviceRegistry;
     private final Mapper mapper;
 
+    @Autowired
+    public DutyServiceImpl(DutyRepository repository, ServiceRegistry serviceRegistry, Mapper mapper) {
+        this.repository = repository;
+        this.serviceRegistry = serviceRegistry;
+        this.mapper = mapper;
+    }
 
     @Transactional
     @Override
@@ -32,25 +38,16 @@ public class DutyServiceImpl implements DutyService {
         try {
             Checker.checkValidation(dutyDTO);
             Duty duty = mapper.dtoToDuty(dutyDTO);
-            save(duty);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void save(Duty duty) throws FieldAlreadyExistException {
-        try {
-            Optional<Duty> optionalDuty = repository.findByName(duty.getName());
-            if (optionalDuty.isPresent()) {
+            boolean isPresent = repository.existsByName(duty.getName());
+            if (isPresent) {
                 throw new FieldAlreadyExistException("this duty is already exists !");
             }
             duty.setIsActive(true);
             repository.save(duty);
-        } catch (NoResultException ignored) {
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         }
     }
-
 
     @Override
     public Set<DutyDto> findAll() {
@@ -61,17 +58,11 @@ public class DutyServiceImpl implements DutyService {
 
 
     @Override
-    public Duty findByName(String name)
-            throws FieldNotFoundException {
-
-        try {
-            Optional<Duty> optionalDuty = repository.findByName(name);
-            if (optionalDuty.isPresent()) {
-                return optionalDuty.get();
-            } else throw new FieldNotFoundException("duty is not exists");
-        } catch (NoResultException ignored) {
-            throw new FieldNotFoundException("duty is not exists");
-        }
+    public Duty findByName(String name) throws FieldNotFoundException {
+        Optional<Duty> optionalDuty = repository.findByName(name);
+        if (optionalDuty.isPresent()) {
+            return optionalDuty.get();
+        } else throw new FieldNotFoundException("duty is not exists");
     }
 
 
@@ -81,10 +72,10 @@ public class DutyServiceImpl implements DutyService {
         try {
             Checker.checkValidation(dutyDTO);
             Duty duty = findByName(dutyDTO.getName());
-            ServiceRegistry.subDutyService().removeAllSubDutiesInDuty(duty);
+            serviceRegistry.subDutyService().removeAllSubDutiesInDuty(duty);
             duty.setIsActive(false);
             repository.save(duty);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }

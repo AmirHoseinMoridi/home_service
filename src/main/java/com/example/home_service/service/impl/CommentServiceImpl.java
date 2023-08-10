@@ -4,16 +4,20 @@ import com.example.home_service.entity.Comment;
 import com.example.home_service.repository.CommentRepository;
 import com.example.home_service.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository repository;
 
+    @Autowired
+    public CommentServiceImpl(CommentRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Comment createDefaultComment() {

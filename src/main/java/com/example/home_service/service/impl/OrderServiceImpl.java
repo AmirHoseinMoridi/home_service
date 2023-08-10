@@ -6,15 +6,20 @@ import com.example.home_service.repository.OrderRepository;
 import com.example.home_service.service.OrderService;
 import com.example.home_service.service.ServiceRegistry;
 import com.example.home_service.util.Checker;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
-@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository repository;
+    private final ServiceRegistry serviceRegistry;
+    @Autowired
+    public OrderServiceImpl(OrderRepository repository, ServiceRegistry serviceRegistry) {
+        this.repository = repository;
+        this.serviceRegistry = serviceRegistry;
+    }
 
     @Transactional
     @Override
@@ -23,12 +28,12 @@ public class OrderServiceImpl implements OrderService {
         try {
             Checker.checkValidation(orderDTO);
 
-            Customer customer = ServiceRegistry.customerService()
+            Customer customer = serviceRegistry.customerService()
                     .findByEmail(orderDTO.getCustomerEmail());
-            SubDuty subDuty = ServiceRegistry.subDutyService()
+            SubDuty subDuty = serviceRegistry.subDutyService()
                     .findByName(orderDTO.getSubDutyName());
-            Address address = ServiceRegistry.addressService().save(orderDTO.getAddressDto());
-            Comment comment = ServiceRegistry.commentService().createDefaultComment();
+            Address address = serviceRegistry.addressService().save(orderDTO.getAddressDto());
+            Comment comment = serviceRegistry.commentService().createDefaultComment();
 
                 Order order = Order.builder()
                         .description(orderDTO.getDescription())
@@ -40,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
                         .comment(comment)
                         .build();
                 repository.save(order);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }

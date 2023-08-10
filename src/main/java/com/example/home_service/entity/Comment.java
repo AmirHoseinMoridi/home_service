@@ -15,7 +15,7 @@ import org.hibernate.annotations.Where;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
-@Where(clause = "isRegistered = true")
+@Where(clause = "is_registered = true")
 public class Comment extends BaseEntity<Long> {
     public static final String DEFAULT_DESCRIPTION = "not registered";
 

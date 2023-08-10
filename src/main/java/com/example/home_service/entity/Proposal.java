@@ -19,16 +19,16 @@ import java.time.LocalTime;
 @Entity
 public class Proposal extends BaseEntity<Long> {
 
-    @Column(name = "date_of_create", nullable = false)
+    @Column( nullable = false)
     LocalDate dateOfCreate;
 
-    @Column(name = "suggested_price_by_expert", nullable = false, scale = 2)
+    @Column( nullable = false, scale = 2)
     Double suggestedPriceByExpert;
 
-    @Column(name = "suggested_date", nullable = false)
+    @Column( nullable = false)
     LocalDate suggestedDate;
 
-    @Column(name = "duration_of_work", nullable = false)
+    @Column( nullable = false)
     LocalTime durationOfWork;
 
 

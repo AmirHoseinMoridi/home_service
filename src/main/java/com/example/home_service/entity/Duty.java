@@ -16,7 +16,7 @@ import org.hibernate.annotations.Where;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
-@Where(clause = "isActive = true")
+@Where(clause = "is_active = true")
 public class Duty extends BaseEntity<Long> {
 
 

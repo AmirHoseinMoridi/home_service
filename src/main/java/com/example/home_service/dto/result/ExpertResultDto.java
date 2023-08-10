@@ -17,7 +17,7 @@ public class ExpertResultDto {
     String lastName;
     String email;
     LocalDate dateOfSignUp;
-    AddressDto addressDto;
+    AddressDto address;
     ExpertStatus status;
     Double point;
     String imagePath;

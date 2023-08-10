@@ -12,7 +12,7 @@ import java.util.Set;
 
 public interface ProposalRepository extends JpaRepository<Proposal,Long> {
 
-    Set<Proposal> findByDateOFCreate(LocalDate dateOFCreate);
+    Set<Proposal> findByDateOfCreate(LocalDate dateOFCreate);
 
     Set<Proposal> findByStatus (ProposalStatus status);
 
