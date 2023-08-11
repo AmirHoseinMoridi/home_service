@@ -8,11 +8,13 @@ import com.example.home_service.exception.FieldNotFoundException;
 import java.util.Set;
 
 public interface DutyService {
-    void create(DutyDto dutyDTO);
+    Duty create(DutyDto dutyDTO);
     Set<DutyDto> findAll();
 
     Duty findByName(String name) throws FieldNotFoundException;
 
     void remove(DutyDto dutyDTO);
+
+    Long count();
 
 }

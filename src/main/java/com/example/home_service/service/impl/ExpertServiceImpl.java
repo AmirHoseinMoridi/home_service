@@ -14,7 +14,6 @@ import com.example.home_service.repository.ExpertRepository;
 import com.example.home_service.service.ExpertService;
 import com.example.home_service.service.ServiceRegistry;
 import com.example.home_service.util.Checker;
-import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,12 +40,13 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public void signUp(ExpertRequestDto expertRequestDTO) {
+    public Expert signUp(ExpertRequestDto expertRequestDTO) {
         try {
             Checker.checkValidation(expertRequestDTO);
-            save(expertRequestDTO);
+            return save(expertRequestDTO);
         } catch (RuntimeException e) {
             e.printStackTrace();
+            return new Expert();
         }
     }
 
@@ -80,14 +80,15 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public void editPassword(EmailAndPasswordDto emailAndPassword, NewPasswordDto newPassword) {
+    public Expert editPassword(EmailAndPasswordDto emailAndPassword, NewPasswordDto newPassword) {
         try {
             Checker.checkValidation(newPassword);
             Expert expert = findByEmailAndPassword(emailAndPassword);
             expert.setPassword(newPassword.getPassword());
-            repository.save(expert);
+            return repository.save(expert);
         } catch (RuntimeException e) {
             e.printStackTrace();
+            return new Expert();
         }
     }
 
@@ -175,18 +176,19 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public void acceptExpert(String expertEmail) {
+    public Expert acceptExpert(String expertEmail) {
         try {
             Expert expert = findByEmail(expertEmail);
             expert.setStatus(ExpertStatus.ACCEPTED);
-            repository.save(expert);
+            return repository.save(expert);
         } catch (RuntimeException e) {
             e.printStackTrace();
+            return new Expert();
         }
     }
 
 
-    private Expert findByEmailAndPassword(EmailAndPasswordDto param)
+    public Expert findByEmailAndPassword(EmailAndPasswordDto param)
             throws FieldNotFoundException, WrongPasswordException {
 
         Checker.checkValidation(param);
@@ -195,6 +197,11 @@ public class ExpertServiceImpl implements ExpertService {
         return Optional.of(expert)
                 .filter(e -> e.getPassword().equals(param.getPassword()))
                 .orElseThrow(() -> new WrongPasswordException("password is wrong !"));
+    }
+
+    @Override
+    public Long count() {
+        return repository.count();
     }
 
 

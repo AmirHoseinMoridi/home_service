@@ -5,6 +5,7 @@ import com.example.home_service.entity.enumaration.ExpertStatus;
 import com.example.home_service.exception.ExpertAccessException;
 import com.example.home_service.exception.ImageNotFoundException;
 import com.example.home_service.exception.ImageSizeOutOfRangeException;
+import com.example.home_service.exception.NotValidException;
 import jakarta.validation.*;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
@@ -14,7 +15,7 @@ import java.nio.file.Files;
 import java.util.Set;
 
 public class Checker {
-    public static <E> void checkValidation(E entity) throws ValidationException {
+    public static <E> void checkValidation(E entity) throws NotValidException {
         ValidatorFactory factory = Validation.byDefaultProvider()
                 .configure()
                 .messageInterpolator(new ParameterMessageInterpolator())
@@ -27,7 +28,7 @@ public class Checker {
             if (!violations.isEmpty()) {
                 StringBuilder errorMassage = new StringBuilder();
                 violations.forEach(v -> errorMassage.append(v.getMessage()).append("\n"));
-                throw new ValidationException(errorMassage.toString());
+                throw new NotValidException(errorMassage.toString());
             }
         }
     }

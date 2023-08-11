@@ -25,4 +25,6 @@ public class ProposalDto {
 
     @NotNull(message = "duration_of_work id null!")
     LocalTime durationOfWork;
+
+    Long orderId;
 }

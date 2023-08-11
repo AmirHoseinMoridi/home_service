@@ -3,8 +3,11 @@ package com.example.home_service.service;
 
 import com.example.home_service.dto.*;
 import com.example.home_service.dto.result.ExpertResultDto;
+import com.example.home_service.entity.Expert;
 import com.example.home_service.entity.enumaration.ExpertStatus;
+import com.example.home_service.exception.FieldNotFoundException;
 import com.example.home_service.exception.ImageNotFoundException;
+import com.example.home_service.exception.WrongPasswordException;
 
 import java.util.Optional;
 import java.util.Set;
@@ -12,9 +15,9 @@ import java.util.Set;
 
 
 public interface ExpertService {
-    void signUp(ExpertRequestDto expertRequestDTO);
+    Expert signUp(ExpertRequestDto expertRequestDTO);
 
-    void editPassword(EmailAndPasswordDto emailAndPassword, NewPasswordDto newPassword);
+    Expert editPassword(EmailAndPasswordDto emailAndPassword, NewPasswordDto newPassword);
     void addingSubDutyRequest(EmailAndPasswordDto emailAndPassword, String subDutyName);
     void removingSubDutyRequest(EmailAndPasswordDto emailAndPassword, String subDutyName);
 
@@ -25,7 +28,11 @@ public interface ExpertService {
     Set<ExpertResultDto> findByStatus(ExpertStatus expertStatus);
 
 
-    void acceptExpert(String expertEmail);
+    Expert acceptExpert(String expertEmail);
 
+
+    Expert findByEmailAndPassword(EmailAndPasswordDto param) throws FieldNotFoundException, WrongPasswordException;
+
+    Long count();
 
 }

@@ -20,14 +20,16 @@ public class ServiceRegistry {
     CustomerService customerService;
     ExpertService expertService;
     CommentService commentService;
+    ProposalService proposalService;
     AssignmentRequestsService assignmentRequestsService;
 
     @Autowired
-    public ServiceRegistry(@Lazy AddressService addressService,@Lazy DutyService dutyService,
-                           @Lazy ImageService imageService,@Lazy OrderService orderService,
-                           @Lazy SubDutyService subDutyService,@Lazy WalletService walletService,
-                           @Lazy CustomerService customerService,@Lazy ExpertService expertService,
-                           @Lazy CommentService commentService,@Lazy AssignmentRequestsService assignmentRequestsService) {
+    public ServiceRegistry(@Lazy AddressService addressService, @Lazy DutyService dutyService,
+                           @Lazy ImageService imageService, @Lazy OrderService orderService,
+                           @Lazy SubDutyService subDutyService, @Lazy WalletService walletService,
+                           @Lazy CustomerService customerService, @Lazy ExpertService expertService,
+                           @Lazy CommentService commentService, @Lazy ProposalService proposalService,
+                           @Lazy AssignmentRequestsService assignmentRequestsService) {
         this.addressService = addressService;
         this.dutyService = dutyService;
         this.imageService = imageService;
@@ -37,6 +39,7 @@ public class ServiceRegistry {
         this.customerService = customerService;
         this.expertService = expertService;
         this.commentService = commentService;
+        this.proposalService = proposalService;
         this.assignmentRequestsService = assignmentRequestsService;
     }
 
@@ -74,6 +77,9 @@ public class ServiceRegistry {
 
     public  CommentService commentService() {
         return commentService;
+    }
+    public ProposalService proposalService(){
+        return proposalService;
     }
 
     public  AssignmentRequestsService assignmentRequestsService() {

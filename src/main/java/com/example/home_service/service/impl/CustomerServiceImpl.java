@@ -17,12 +17,10 @@ import com.example.home_service.service.CustomerService;
 import com.example.home_service.service.ServiceRegistry;
 import com.example.home_service.util.Checker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -43,7 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
     @Override
-    public void signUp(CustomerRequestDto customerRequestDto) {
+    public Customer signUp(CustomerRequestDto customerRequestDto) {
         try {
             Checker.checkValidation(customerRequestDto);
             Customer customer = mapper.dtoToCustomer(customerRequestDto);
@@ -60,9 +58,10 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setDateOfSignUp(LocalDate.now());
             customer.setAddress(address);
 
-            repository.save(customer);
+           return repository.save(customer);
         } catch (RuntimeException e) {
             e.printStackTrace();
+            return new Customer();
         }
     }
 

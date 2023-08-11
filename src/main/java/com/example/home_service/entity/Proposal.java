@@ -32,9 +32,9 @@ public class Proposal extends BaseEntity<Long> {
     LocalTime durationOfWork;
 
 
-    //todo
+
     @Enumerated(value = EnumType.STRING)
-    ProposalStatus status = ProposalStatus.WAITING;
+    ProposalStatus status ;
 
     @ManyToOne
     Order order;

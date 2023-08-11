@@ -10,22 +10,22 @@ import com.example.home_service.exception.FieldNotFoundException;
 import java.util.Set;
 
 public interface SubDutyService {
-    void create(SubDutyDto subDutyDTO, DutyDto dutyDTO);
+    SubDuty create(SubDutyDto subDutyDTO, DutyDto dutyDTO);
 
     Set<SubDutyDto> findAll();
 
     Set<SubDutyDto> findSubDutiesInDuty(DutyDto dutyDTO);
 
-    void update(SubDutyDto subDutyDTO);
+    SubDuty update(SubDutyDto subDutyDTO);
 
     void remove(String subDutyName);
     void removeAllSubDutiesInDuty(Duty duty) throws FieldNotFoundException;
 
     SubDuty findByName(String name) throws FieldNotFoundException;
 
-    void addExpertToSubDuty(Long assignmentRequestsId);
+    boolean addExpertToSubDuty(Long assignmentRequestsId);
 
-    void removeExpertFromSubDuty(Long assignmentRequestsId);
+    boolean removeExpertFromSubDuty(Long assignmentRequestsId);
 
     Set<SubDuty> findByExpert(Expert expert);
 }

@@ -34,7 +34,7 @@ public class DutyServiceImpl implements DutyService {
 
     @Transactional
     @Override
-    public void create(DutyDto dutyDTO) {
+    public Duty create(DutyDto dutyDTO) {
         try {
             Checker.checkValidation(dutyDTO);
             Duty duty = mapper.dtoToDuty(dutyDTO);
@@ -43,9 +43,10 @@ public class DutyServiceImpl implements DutyService {
                 throw new FieldAlreadyExistException("this duty is already exists !");
             }
             duty.setIsActive(true);
-            repository.save(duty);
+            return repository.save(duty);
         } catch (RuntimeException e) {
             e.printStackTrace();
+            return new Duty();
         }
     }
 
@@ -78,6 +79,11 @@ public class DutyServiceImpl implements DutyService {
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Long count() {
+        return repository.count();
     }
 
 }

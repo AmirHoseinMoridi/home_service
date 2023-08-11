@@ -1,6 +1,7 @@
 package com.example.home_service.entity;
 
 import com.example.home_service.entity.base.BaseEntity;
+import com.example.home_service.entity.enumaration.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,6 +25,9 @@ public class Order extends BaseEntity<Long> {
     Double suggestedPriceByCustomer;
 
     LocalDate suggestedDateForStartWork;
+
+    @Enumerated(value = EnumType.STRING)
+    OrderStatus status;
 
     @ManyToOne
     Customer customer;

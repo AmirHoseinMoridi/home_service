@@ -5,7 +5,7 @@ import com.example.home_service.dto.ImageDto;
 import com.example.home_service.entity.Image;
 import com.example.home_service.exception.ImageNotFoundException;
 import com.example.home_service.exception.ImageSizeOutOfRangeException;
-import com.example.home_service.exception.ValidationException;
+import com.example.home_service.exception.NotValidException;
 import com.example.home_service.mapper.ImageMapper;
 import com.example.home_service.mapper.ImageMapperImpl;
 import com.example.home_service.repository.ImageRepository;
@@ -28,7 +28,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image save(ImageDto request)
-            throws ValidationException, ImageNotFoundException, ImageSizeOutOfRangeException {
+            throws NotValidException, ImageNotFoundException, ImageSizeOutOfRangeException {
 
         File imageFile = imageMapper.paramToImageFile(request);
         Checker.checkValidation(request);

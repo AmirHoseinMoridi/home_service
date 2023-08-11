@@ -15,6 +15,6 @@ import lombok.experimental.FieldDefaults;
 public class ImageDto {
 
     @NotBlank(message = "image path not valid !")
-    @Pattern(regexp = Regex.IMAGE_JPG, message = "image path is not valid")
+    @Pattern(regexp = Regex.IMAGE_JPG, message = "image path not valid !")
     String imagePath;
 }

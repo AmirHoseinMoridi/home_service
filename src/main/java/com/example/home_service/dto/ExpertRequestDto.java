@@ -22,11 +22,11 @@ public class ExpertRequestDto{
     String lastName;
 
     @NotBlank(message = "email is not valid !")
-    @Pattern(regexp = Regex.EMAIL, message = "email is not valid!")
+    @Pattern(regexp = Regex.EMAIL, message = "email is not valid !")
     String email;
 
     @NotBlank(message = "password is not valid !")
-    @Pattern(regexp = Regex.EIGHT_CHARACTERS_WITH_LETTERS_AND_NUMBERS, message = "password is not valid")
+    @Pattern(regexp = Regex.EIGHT_CHARACTERS_WITH_LETTERS_AND_NUMBERS, message = "password is not valid !")
     String password;
 
     AddressDto address;

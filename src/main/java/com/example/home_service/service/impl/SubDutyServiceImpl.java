@@ -13,12 +13,9 @@ import com.example.home_service.repository.SubDutyRepository;
 import com.example.home_service.service.ServiceRegistry;
 import com.example.home_service.service.SubDutyService;
 import com.example.home_service.util.Checker;
-import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -39,7 +36,7 @@ public class SubDutyServiceImpl implements SubDutyService {
 
     @Transactional
     @Override
-    public void create(SubDutyDto subDutyDto, DutyDto dutyDto) {
+    public SubDuty create(SubDutyDto subDutyDto, DutyDto dutyDto) {
         try {
             Checker.checkValidation(dutyDto);
             boolean isExists = repository.existsByName(subDutyDto.getName());
@@ -50,10 +47,10 @@ public class SubDutyServiceImpl implements SubDutyService {
             SubDuty subDuty = mapper.dtoToSubDuty(subDutyDto);
             subDuty.setIsActive(true);
             subDuty.setDuty(duty);
-            repository.save(subDuty);
-
+           return repository.save(subDuty);
         } catch (RuntimeException e) {
             e.printStackTrace();
+           return new SubDuty();
         }
     }
 
@@ -61,15 +58,16 @@ public class SubDutyServiceImpl implements SubDutyService {
 
     @Transactional
     @Override
-    public void update(SubDutyDto subDutyDto) {
+    public SubDuty update(SubDutyDto subDutyDto) {
         try {
             Checker.checkValidation(subDutyDto);
             SubDuty subDuty = findByName(subDutyDto.getName());
             subDuty.setPrice(subDutyDto.getPrice());
             subDuty.setDescription(subDutyDto.getDescription());
-            repository.save(subDuty);
+            return repository.save(subDuty);
         } catch (RuntimeException e) {
             e.printStackTrace();
+            return new SubDuty();
         }
     }
 
@@ -138,7 +136,7 @@ public class SubDutyServiceImpl implements SubDutyService {
 
     @Transactional
     @Override
-    public void addExpertToSubDuty(Long assignmentRequestsId) {
+    public boolean addExpertToSubDuty(Long assignmentRequestsId) {
         try {
             Optional<AssignmentRequests> optionalRequest = serviceRegistry.assignmentRequestsService()
                     .findById(assignmentRequestsId);
@@ -158,14 +156,16 @@ public class SubDutyServiceImpl implements SubDutyService {
             repository.save(subDuty);
 
             serviceRegistry.assignmentRequestsService().remove(request);
+            return true;
         } catch (RuntimeException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     @Transactional
     @Override
-    public void removeExpertFromSubDuty(Long assignmentRequestsId) {
+    public boolean removeExpertFromSubDuty(Long assignmentRequestsId) {
         try {
             Optional<AssignmentRequests> optional = serviceRegistry.assignmentRequestsService()
                     .findById(assignmentRequestsId);
@@ -185,11 +185,13 @@ public class SubDutyServiceImpl implements SubDutyService {
             serviceRegistry.assignmentRequestsService().remove(request);
             if (isRemoved) {
                 repository.save(subDuty);
+                return true;
             } else {
                 throw new FieldNotFoundException("this sub duty is not in this expert's sub duties !");
             }
         } catch (RuntimeException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

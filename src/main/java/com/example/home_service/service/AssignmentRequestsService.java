@@ -15,4 +15,5 @@ public interface AssignmentRequestsService {
     void remove(AssignmentRequests assignmentRequests);
     Set<AssignmentRequests> findAll();
     Set<AssignmentRequests> findByRequestAction(RequestAction action);
+    Long count();
 }

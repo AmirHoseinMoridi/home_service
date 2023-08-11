@@ -14,7 +14,7 @@ import java.util.Set;
 
 
 public interface CustomerService {
-    void signUp(CustomerRequestDto customerRequestDTO);
+    Customer signUp(CustomerRequestDto customerRequestDTO);
 
     void editPassword(EmailAndPasswordDto emailAndPassword, NewPasswordDto newPassword);
 

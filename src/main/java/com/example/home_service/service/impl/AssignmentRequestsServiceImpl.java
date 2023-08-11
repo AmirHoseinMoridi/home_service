@@ -55,4 +55,9 @@ public class AssignmentRequestsServiceImpl implements AssignmentRequestsService 
     public Set<AssignmentRequests> findByRequestAction(RequestAction action) {
         return repository.findByAction(action);
     }
+
+    @Override
+    public Long count() {
+        return repository.count();
+    }
 }
