@@ -8,7 +8,6 @@ import com.example.home_service.entity.enumaration.RequestAction;
 import com.example.home_service.exception.FieldAlreadyExistException;
 import com.example.home_service.repository.AssignmentRequestsRepository;
 import com.example.home_service.service.AssignmentRequestsService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,20 +1,23 @@
 package com.example.home_service.service.impl;
 
-import com.example.home_service.dto.EmailAndPasswordDto;
+import com.example.home_service.dto.CommentDto;
 import com.example.home_service.dto.OrderDto;
 import com.example.home_service.entity.*;
 import com.example.home_service.entity.enumaration.OrderStatus;
+import com.example.home_service.entity.enumaration.ProposalStatus;
 import com.example.home_service.exception.FieldNotFoundException;
 import com.example.home_service.mapper.Mapper;
 import com.example.home_service.repository.OrderRepository;
 import com.example.home_service.service.OrderService;
 import com.example.home_service.service.ServiceRegistry;
-import com.example.home_service.util.Checker;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,6 +27,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository repository;
     private final ServiceRegistry serviceRegistry;
     private final Mapper mapper;
+
     @Autowired
     public OrderServiceImpl(OrderRepository repository, ServiceRegistry serviceRegistry, Mapper mapper) {
         this.repository = repository;
@@ -33,48 +37,45 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Order addOrder(OrderDto orderDTO) {
+    public void addOrder(OrderDto orderDTO) {
 
-        try {
-            Checker.checkValidation(orderDTO);
 
-            Customer customer = serviceRegistry.customerService()
-                    .findByEmail(orderDTO.getCustomerEmail());
-            SubDuty subDuty = serviceRegistry.subDutyService()
-                    .findByName(orderDTO.getSubDutyName());
-            Address address = serviceRegistry.addressService().save(orderDTO.getAddressDto());
-            Comment comment = serviceRegistry.commentService().createDefaultComment();
+        Customer customer = serviceRegistry.customerService()
+                .findByEmail(orderDTO.getCustomerEmail());
+        SubDuty subDuty = serviceRegistry.subDutyService()
+                .findByName(orderDTO.getSubDutyName());
+        Address address = serviceRegistry.addressService().save(
+                mapper.dtoToAddress(orderDTO.getAddressDto()));
 
-                Order order = Order.builder()
-                        .description(orderDTO.getDescription())
-                        .suggestedPriceByCustomer(orderDTO.getSuggestedPriceByCustomer())
-                        .suggestedDateForStartWork(orderDTO.getSuggestedDateForStartWork())
-                        .status(OrderStatus.WAITING_FOR_EXPERT_ADVICE)
-                        .customer(customer)
-                        .subDuty(subDuty)
-                        .address(address)
-                        .comment(comment)
-                        .build();
-                return repository.save(order);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return new Order();
-        }
+        Order order = Order.builder()
+                .description(orderDTO.getDescription())
+                .suggestedPriceByCustomer(orderDTO.getSuggestedPriceByCustomer())
+                .suggestedDateForStartWork(orderDTO.getSuggestedDateForStartWork())
+                .status(OrderStatus.WAITING_FOR_EXPERT_ADVICE)
+                .customer(customer)
+                .subDuty(subDuty)
+                .address(address)
+                .build();
+         repository.save(order);
+
     }
 
     @Override
-    public Set<Order> findOrders(EmailAndPasswordDto emailAndPasswordDto) {
-
+    public Set<Order> findOrders(String email, String password) {
         Expert expert = serviceRegistry.expertService()
-                .findByEmailAndPassword(emailAndPasswordDto);
+                .findByEmailAndPassword(email, password);
+
         return repository.findByExpert(expert);
     }
 
 
-
     @Override
-    public Optional<Order> findById(Long id) {
-        return repository.findById(id);
+    public Order findById(Long id) {
+        Optional<Order> optional = repository.findById(id);
+        if (optional.isEmpty()) {
+            throw new FieldNotFoundException("order is not exists !");
+        }
+        return optional.get();
     }
 
     @Override
@@ -82,25 +83,32 @@ public class OrderServiceImpl implements OrderService {
         repository.save(order);
     }
 
+
     @Override
-    public Order start(Long orderId) {
-        Optional<Order> optional = repository.findById(orderId);
-        if (optional.isEmpty()){
-            throw new FieldNotFoundException("order is not exists !");
-        }
-        Order order = optional.get();
+    public void start(Long orderId) {
+        Order order = findById(orderId);
         order.setStatus(OrderStatus.STARTED);
-        return order;
+        repository.save(order);
     }
 
     @Override
-    public Order done(Long orderId) {
-        Optional<Order> optional = repository.findById(orderId);
-        if (optional.isEmpty()){
-            throw new FieldNotFoundException("order is not exists !");
-        }
-        Order order = optional.get();
+    public void done(CommentDto commentDto) {
+        Order order = findById(commentDto.getOrderId());
         order.setStatus(OrderStatus.DONE);
-        return order;
+        repository.save(order);
+        serviceRegistry.commentService().addComment(order, commentDto.getPoint(), commentDto.getDescription());
+
+
+        Proposal proposal = serviceRegistry.proposalService().findAcceptedByOrder(order);
+
+        LocalDateTime proposalTime = proposal.getSuggestedDate()
+                .plusHours(proposal.getDurationOfWork().getHour())
+                .plusMinutes(proposal.getDurationOfWork().getMinute());
+
+        int subtraction = 0;
+        if (proposalTime.isAfter(order.getSuggestedDateForStartWork())){
+            subtraction+=proposalTime.getHour()-order.getSuggestedDateForStartWork().getHour();
+        }
+        serviceRegistry.expertService().subtractPoint(proposal.getExpert(),subtraction);
     }
 }

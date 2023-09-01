@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class Order extends BaseEntity<Long> {
 
     Double suggestedPriceByCustomer;
 
-    LocalDate suggestedDateForStartWork;
+    LocalDateTime suggestedDateForStartWork;
 
     @Enumerated(value = EnumType.STRING)
     OrderStatus status;
@@ -37,8 +38,5 @@ public class Order extends BaseEntity<Long> {
 
     @ManyToOne
     Address address;
-
-    @OneToOne
-    Comment comment;
 
 }

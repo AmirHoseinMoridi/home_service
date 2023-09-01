@@ -1,22 +1,23 @@
 package com.example.home_service.service;
 
 
-import com.example.home_service.dto.EmailAndPasswordDto;
+import com.example.home_service.dto.CommentDto;
 import com.example.home_service.dto.OrderDto;
 import com.example.home_service.entity.Order;
 
-import java.util.Optional;
 import java.util.Set;
 
 public interface OrderService {
 
-    Order addOrder(OrderDto orderDTO) ;
+    void addOrder(OrderDto orderDTO) ;
 
-    Set<Order> findOrders(EmailAndPasswordDto emailAndPasswordDto);
+    Set<Order> findOrders(String email,String password);
 
-    Optional<Order> findById(Long id);
+    Order findById(Long id);
+
     void update(Order order);
+    void start(Long orderId);
+    void done(CommentDto commentDto);
 
-    Order start(Long orderId);
-    Order done(Long orderId);
+
 }

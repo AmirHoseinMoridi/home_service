@@ -1,15 +1,10 @@
 package com.example.home_service.service.impl;
 
 
-import com.example.home_service.dto.*;
-import com.example.home_service.dto.result.ExpertResultDto;
 import com.example.home_service.entity.*;
 import com.example.home_service.entity.enumaration.ExpertStatus;
 import com.example.home_service.entity.enumaration.RequestAction;
 import com.example.home_service.exception.*;
-import com.example.home_service.mapper.ImageMapper;
-import com.example.home_service.mapper.ImageMapperImpl;
-import com.example.home_service.mapper.Mapper;
 import com.example.home_service.repository.ExpertRepository;
 import com.example.home_service.service.ExpertService;
 import com.example.home_service.service.ServiceRegistry;
@@ -28,46 +23,27 @@ public class ExpertServiceImpl implements ExpertService {
 
     private final ExpertRepository repository;
     private final ServiceRegistry serviceRegistry;
-    private final Mapper mapper;
 
-    private final ImageMapper imageMapper = new ImageMapperImpl();
     @Autowired
-    public ExpertServiceImpl(ExpertRepository repository, ServiceRegistry serviceRegistry, Mapper mapper) {
+    public ExpertServiceImpl(ExpertRepository repository, ServiceRegistry serviceRegistry) {
         this.repository = repository;
         this.serviceRegistry = serviceRegistry;
-        this.mapper = mapper;
     }
 
     @Transactional
     @Override
-    public Expert signUp(ExpertRequestDto expertRequestDTO) {
-        try {
-            Checker.checkValidation(expertRequestDTO);
-            return save(expertRequestDTO);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return new Expert();
-        }
-    }
-
-
-    private Expert save(ExpertRequestDto expertRequestDTO)
-            throws ImageNotFoundException,ImageSizeOutOfRangeException, FieldAlreadyExistException {
-
-        Optional<Expert> optionalExpert = repository.findByEmail(expertRequestDTO.getEmail());
-        if (optionalExpert.isPresent()) {
+    public void signUp(Expert expert, Image image) {
+        if (repository.existsByEmail(expert.getEmail())) {
             throw new FieldAlreadyExistException("this email is already exist !");
         }
-        Expert expert = mapper.dtoToExpert(expertRequestDTO);
-        Image image = serviceRegistry.imageService().save(expertRequestDTO.getImageDTO());
-        Address address = serviceRegistry.addressService().save(expertRequestDTO.getAddress());
+        Address address = serviceRegistry.addressService().save(expert.getAddress());
         Wallet wallet = serviceRegistry.walletService().createWallet();
         Expert filledExpert = fillExpert(expert, image, address, wallet);
-        return repository.save(filledExpert);
+        repository.save(filledExpert);
     }
 
 
-    private Expert fillExpert(Expert expert, Image image, Address address, Wallet wallet){
+    private Expert fillExpert(Expert expert, Image image, Address address, Wallet wallet) {
         expert.setAddress(address);
         expert.setImage(image);
         expert.setWallet(wallet);
@@ -80,35 +56,27 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public Expert editPassword(EmailAndPasswordDto emailAndPassword, NewPasswordDto newPassword) {
-        try {
-            Checker.checkValidation(newPassword);
-            Expert expert = findByEmailAndPassword(emailAndPassword);
-            expert.setPassword(newPassword.getPassword());
-            return repository.save(expert);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return new Expert();
-        }
+    public void editPassword(String email, String oldPassword, String newPassword) {
+        Expert expert = findByEmailAndPassword(email, oldPassword);
+        expert.setPassword(newPassword);
+        repository.save(expert);
     }
 
 
     @Transactional
     @Override
-    public void addingSubDutyRequest(EmailAndPasswordDto emailAndPassword, String subDutyName) {
-        try {
-            Expert expert = findByEmailAndPassword(emailAndPassword);
-            Checker.checkExpertsAccess(expert);
+    public void addingSubDutyRequest(String email, String password, String subDutyName) {
 
-            SubDuty subDuty = serviceRegistry.subDutyService().findByName(subDutyName);
-            checkRangeOfDuty(expert, subDuty);
-            createAssignmentRequest(expert, subDuty, RequestAction.ADD);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
+        Expert expert = findByEmailAndPassword(email, password);
+        Checker.checkExpertsAccess(expert);
+
+        SubDuty subDuty = serviceRegistry.subDutyService().findByName(subDutyName);
+        checkRangeOfDuty(expert, subDuty);
+        createAssignmentRequest(expert, subDuty, RequestAction.ADD);
+
     }
 
-    private void checkRangeOfDuty(Expert expert, SubDuty subDuty) throws DutyOutOfRangeException {
+    private void checkRangeOfDuty(Expert expert, SubDuty subDuty) {
         Set<SubDuty> expertSubDuties = serviceRegistry.subDutyService().findByExpert(expert);
         if (!expertSubDuties.isEmpty()) {
             SubDuty firstSubDuty = expertSubDuties.stream().findFirst().get();
@@ -118,48 +86,45 @@ public class ExpertServiceImpl implements ExpertService {
         }
     }
 
-
     @Transactional
     @Override
-    public void removingSubDutyRequest(EmailAndPasswordDto emailAndPassword, String subDutyName) {
-        try {
-            Expert expert = findByEmailAndPassword(emailAndPassword);
-            Checker.checkExpertsAccess(expert);
-            SubDuty subDuty = serviceRegistry.subDutyService().findByName(subDutyName);
-            Set<SubDuty> expertsSubDuties = serviceRegistry.subDutyService().findByExpert(expert);
+    public void removingSubDutyRequest(String email, String password, String subDutyName) {
 
-            if (expertsSubDuties.contains(subDuty)) {
-                createAssignmentRequest(expert, subDuty, RequestAction.REMOVE);
-            } else throw new FieldNotFoundException("this sub duty is not exists in expert's sub duties !");
-        } catch (RuntimeException e) {
-            e.printStackTrace();
+        Expert expert = findByEmailAndPassword(email, password);
+        Checker.checkExpertsAccess(expert);
+        SubDuty subDuty = serviceRegistry.subDutyService().findByName(subDutyName);
+        Set<SubDuty> expertsSubDuties = serviceRegistry.subDutyService().findByExpert(expert);
+
+        if (expertsSubDuties.contains(subDuty)) {
+            createAssignmentRequest(expert, subDuty, RequestAction.REMOVE);
+        } else throw new FieldNotFoundException("this sub duty is not exists in expert's sub duties !");
+
+    }
+
+    @Override
+    public Optional<Wallet> findWallet(String email, String password) {
+        Expert expert = findByEmailAndPassword(email, password);
+        return Optional.ofNullable(expert.getWallet());
+    }
+
+
+    @Override
+    public Set<Expert> findAll() throws ImageNotFoundException {
+        return new HashSet<>(repository.findAll());
+    }
+
+    @Override
+    public void subtractPoint(Expert expert, int subtract) {
+        Double oldPoint = expert.getPoint();
+        expert.setPoint(oldPoint - subtract);
+        if (expert.getPoint() < 0) {
+            expert.setStatus(ExpertStatus.AWAITING_CONFIRMATION);
         }
-    }
-
-    @Override
-    public Optional<WalletDto> findWallet(EmailAndPasswordDto emailAndPassword) {
-        try {
-            Expert expert = findByEmailAndPassword(emailAndPassword);
-            WalletDto walletDTO = mapper.walletToDto(expert.getWallet());
-            return Optional.ofNullable(walletDTO);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
+        repository.save(expert);
     }
 
 
-    @Override
-    public Set<ExpertResultDto> findAll() throws ImageNotFoundException {
-        Set<ExpertResultDto> results = new HashSet<>();
-        repository.findAll().forEach(
-                expert -> results.add(mapper.expertToDto(expert))
-        );
-        return results;
-    }
-
-
-    @Override
+/*    @Override
     public Set<ExpertResultDto> findByStatus(ExpertStatus expertStatus) {
         try {
             Set<ExpertResultDto> responses = new HashSet<>();
@@ -171,31 +136,25 @@ public class ExpertServiceImpl implements ExpertService {
             e.printStackTrace();
             return new HashSet<>();
         }
-    }
+    }*/
 
 
     @Transactional
     @Override
-    public Expert acceptExpert(String expertEmail) {
-        try {
-            Expert expert = findByEmail(expertEmail);
-            expert.setStatus(ExpertStatus.ACCEPTED);
-            return repository.save(expert);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return new Expert();
-        }
+    public void acceptExpert(String expertEmail) {
+        Expert expert = findByEmailOrThrowException(expertEmail);
+        expert.setStatus(ExpertStatus.ACCEPTED);
+        repository.save(expert);
     }
 
 
-    public Expert findByEmailAndPassword(EmailAndPasswordDto param)
+    public Expert findByEmailAndPassword(String email, String password)
             throws FieldNotFoundException, WrongPasswordException {
 
-        Checker.checkValidation(param);
-        Expert expert = findByEmail(param.getEmail());
+        Expert expert = findByEmailOrThrowException(email);
 
         return Optional.of(expert)
-                .filter(e -> e.getPassword().equals(param.getPassword()))
+                .filter(e -> e.getPassword().equals(password))
                 .orElseThrow(() -> new WrongPasswordException("password is wrong !"));
     }
 
@@ -205,9 +164,9 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
 
-    private Expert findByEmail(String email) throws FieldNotFoundException {
+    private Expert findByEmailOrThrowException(String email) {
         return repository.findByEmail(email)
-                    .orElseThrow(() -> new FieldNotFoundException("expert is not exists!"));
+                .orElseThrow(() -> new FieldNotFoundException("expert is not exists!"));
     }
 
     private void createAssignmentRequest(Expert expert, SubDuty subDuty, RequestAction action)

@@ -22,4 +22,9 @@ public class WalletServiceImpl implements WalletService {
         wallet.setBalance(0D);
         return repository.save(wallet);
     }
+
+    @Override
+    public void update(Wallet wallet) {
+        repository.save(wallet);
+    }
 }

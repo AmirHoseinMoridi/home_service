@@ -1,9 +1,9 @@
 package com.example.home_service.service;
 
-
-import com.example.home_service.dto.*;
 import com.example.home_service.dto.result.ExpertResultDto;
 import com.example.home_service.entity.Expert;
+import com.example.home_service.entity.Image;
+import com.example.home_service.entity.Wallet;
 import com.example.home_service.entity.enumaration.ExpertStatus;
 import com.example.home_service.exception.FieldNotFoundException;
 import com.example.home_service.exception.ImageNotFoundException;
@@ -15,24 +15,29 @@ import java.util.Set;
 
 
 public interface ExpertService {
-    Expert signUp(ExpertRequestDto expertRequestDTO);
+    void signUp(Expert expert, Image image);
 
-    Expert editPassword(EmailAndPasswordDto emailAndPassword, NewPasswordDto newPassword);
-    void addingSubDutyRequest(EmailAndPasswordDto emailAndPassword, String subDutyName);
-    void removingSubDutyRequest(EmailAndPasswordDto emailAndPassword, String subDutyName);
+    void editPassword(String email,String oldPassword, String newPassword);
+    void addingSubDutyRequest(String email,String password, String subDutyName);
+    void removingSubDutyRequest(String email,String password, String subDutyName);
 
-    Optional<WalletDto> findWallet(EmailAndPasswordDto emailAndPassword);
+    Optional<Wallet> findWallet(String email, String password);
 
-    Set<ExpertResultDto> findAll() throws ImageNotFoundException;
+    Set<Expert> findAll() throws ImageNotFoundException;
 
-    Set<ExpertResultDto> findByStatus(ExpertStatus expertStatus);
-
-
-    Expert acceptExpert(String expertEmail);
+  //  Set<ExpertResultDto> findByStatus(ExpertStatus expertStatus);
 
 
-    Expert findByEmailAndPassword(EmailAndPasswordDto param) throws FieldNotFoundException, WrongPasswordException;
+    void subtractPoint(Expert expert,int subtract);
+
+    void acceptExpert(String expertEmail);
+
+
+    Expert findByEmailAndPassword(String email,String Password) throws FieldNotFoundException, WrongPasswordException;
 
     Long count();
+
+
+
 
 }

@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @ToString
 @Getter
 @Setter
@@ -32,7 +34,7 @@ public class OrderDto {
 
     @NotNull(message = "suggested_date_for_start_work is null !")
     @FutureOrPresent(message = "suggested_date_for_start_work must be date in the future or present ")
-    LocalDate suggestedDateForStartWork;
+    LocalDateTime suggestedDateForStartWork;
 
     AddressDto addressDto;
 }

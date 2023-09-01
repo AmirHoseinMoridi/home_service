@@ -1,21 +1,14 @@
 package com.example.home_service.service.impl;
 
-import com.example.home_service.dto.EmailAndPasswordDto;
-import com.example.home_service.dto.NewPasswordDto;
-import com.example.home_service.dto.CustomerRequestDto;
-import com.example.home_service.dto.WalletDto;
-import com.example.home_service.dto.result.CustomerResultDto;
 import com.example.home_service.entity.Address;
 import com.example.home_service.entity.Customer;
 import com.example.home_service.entity.Wallet;
 import com.example.home_service.exception.FieldAlreadyExistException;
 import com.example.home_service.exception.FieldNotFoundException;
 import com.example.home_service.exception.WrongPasswordException;
-import com.example.home_service.mapper.Mapper;
 import com.example.home_service.repository.CustomerRepository;
 import com.example.home_service.service.CustomerService;
 import com.example.home_service.service.ServiceRegistry;
-import com.example.home_service.util.Checker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,89 +24,57 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
     private final ServiceRegistry serviceRegistry;
-    private final Mapper mapper;
+
     @Autowired
-    public CustomerServiceImpl(CustomerRepository repository, ServiceRegistry serviceRegistry, Mapper mapper) {
+    public CustomerServiceImpl(CustomerRepository repository, ServiceRegistry serviceRegistry) {
         this.repository = repository;
         this.serviceRegistry = serviceRegistry;
-        this.mapper = mapper;
     }
 
     @Transactional
     @Override
-    public Customer signUp(CustomerRequestDto customerRequestDto) {
-        try {
-            Checker.checkValidation(customerRequestDto);
-            Customer customer = mapper.dtoToCustomer(customerRequestDto);
-
-            Optional<Customer> optionalCustomer = repository.findByEmail(customer.getEmail());
-            if (optionalCustomer.isPresent()) {
-                throw new FieldAlreadyExistException("this email is already exist !");
-            }
-
-            Address address = serviceRegistry.addressService().save(customerRequestDto.getAddress());
-            Wallet wallet = serviceRegistry.walletService().createWallet();
-
-            customer.setWallet(wallet);
-            customer.setDateOfSignUp(LocalDate.now());
-            customer.setAddress(address);
-
-           return repository.save(customer);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return new Customer();
+    public void signUp(Customer customer) {
+        if (repository.existsByEmail(customer.getEmail())) {
+            throw new FieldAlreadyExistException("this email is already exist !");
         }
+
+        Address address = serviceRegistry.addressService().save(customer.getAddress());
+        Wallet wallet = serviceRegistry.walletService().createWallet();
+
+        customer.setWallet(wallet);
+        customer.setDateOfSignUp(LocalDate.now());
+        customer.setAddress(address);
+
+        repository.save(customer);
     }
 
 
     @Transactional()
     @Override
-    public void editPassword(EmailAndPasswordDto emailAndPassword, NewPasswordDto newPassword) {
-        try {
-            Checker.checkValidation(emailAndPassword);
-            Checker.checkValidation(newPassword);
-            Customer customer = findByEmailAndPassword(
-                    emailAndPassword.getEmail(), emailAndPassword.getPassword()
-            );
-            customer.setPassword(newPassword.getPassword());
-            repository.save(customer);
-        }catch (RuntimeException e){
-            e.printStackTrace();
-        }
+    public void editPassword(String email, String oldPassword, String newPassword) {
+        Customer customer = findByEmailAndPassword(email, oldPassword);
+        customer.setPassword(newPassword);
+        repository.save(customer);
     }
 
     @Override
-    public Optional<WalletDto> findWallet(EmailAndPasswordDto request) {
-        try {
-            Checker.checkValidation(request);
-            Customer customer = findByEmailAndPassword(request.getEmail(), request.getPassword());
-            WalletDto walletDTO = mapper.walletToDto(customer.getWallet());
-            return Optional.ofNullable(walletDTO);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
+    public Optional<Wallet> findWallet(String email, String password) {
+        Customer customer = findByEmailAndPassword(email, password);
+        return Optional.ofNullable(customer.getWallet());
     }
 
     @Override
-    public Customer findByEmail(String email) throws FieldNotFoundException {
-        Optional<Customer> optionalCustomer = repository.findByEmail(email);
-        if (optionalCustomer.isPresent()) {
-            return optionalCustomer.get();
-        } else throw new FieldNotFoundException("customer is not exists !");
+    public Customer findByEmail(String email) {
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new FieldNotFoundException("customer is not exists !"));
     }
 
     @Override
-    public Set<CustomerResultDto> findAll() {
-        Set<CustomerResultDto> response = new HashSet<>();
-        repository.findAll().forEach(
-                customer -> response.add(mapper.customerToDto(customer))
-        );
-        return response;
+    public Set<Customer> findAll() {
+        return new HashSet<>(repository.findAll());
     }
 
-    private Customer findByEmailAndPassword(String email, String password)
-            throws FieldNotFoundException, WrongPasswordException {
+    private Customer findByEmailAndPassword(String email, String password){
 
         Customer customer = findByEmail(email);
         if (!customer.getPassword().equals(password)) {

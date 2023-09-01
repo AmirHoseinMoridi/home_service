@@ -1,13 +1,10 @@
 package com.example.home_service.service.impl;
 
 
-import com.example.home_service.dto.AddressDto;
 import com.example.home_service.entity.Address;
 import com.example.home_service.exception.NotValidException;
-import com.example.home_service.mapper.Mapper;
 import com.example.home_service.repository.AddressRepository;
 import com.example.home_service.service.AddressService;
-import com.example.home_service.util.Checker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,18 +13,15 @@ import org.springframework.stereotype.Component;
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository repository;
-    private final Mapper mapper;
+
 
     @Autowired
-    public AddressServiceImpl(AddressRepository repository, Mapper mapper) {
+    public AddressServiceImpl(AddressRepository repository) {
         this.repository = repository;
-        this.mapper = mapper;
     }
 
     @Override
-    public Address save(AddressDto addressDTO) throws NotValidException {
-        Checker.checkValidation(addressDTO);
-        Address address = mapper.dtoToAddress(addressDTO);
+    public Address save(Address address) throws NotValidException {
         return repository.save(address);
     }
 }

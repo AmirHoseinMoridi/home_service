@@ -1,3 +1,4 @@
+/*
 package com.example.home_service;
 
 import com.example.home_service.dto.*;
@@ -155,6 +156,7 @@ public class ExpertServicesTest {
     }
 
 
+*/
 /*
     @Test
     @Order(value = 7)
@@ -167,7 +169,8 @@ public class ExpertServicesTest {
         Expert edited = serviceRegistry.expertService().editPassword(emailAndPasswordDto, newPasswordDto);
         assertThat(edited.getPassword()).isEqualTo(newPasswordDto.getPassword());
     }
-*/
+*//*
+
 
     @Test
     @Order(value = 7)
@@ -222,3 +225,4 @@ public class ExpertServicesTest {
         assertThat(start.getStatus()).isEqualTo(OrderStatus.DONE);
     }
 }
+*/

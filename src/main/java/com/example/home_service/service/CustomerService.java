@@ -1,11 +1,7 @@
 package com.example.home_service.service;
 
-import com.example.home_service.dto.EmailAndPasswordDto;
-import com.example.home_service.dto.NewPasswordDto;
-import com.example.home_service.dto.CustomerRequestDto;
-import com.example.home_service.dto.WalletDto;
-import com.example.home_service.dto.result.CustomerResultDto;
 import com.example.home_service.entity.Customer;
+import com.example.home_service.entity.Wallet;
 import com.example.home_service.exception.FieldNotFoundException;
 
 import java.util.Optional;
@@ -14,13 +10,13 @@ import java.util.Set;
 
 
 public interface CustomerService {
-    Customer signUp(CustomerRequestDto customerRequestDTO);
+    void signUp(Customer customer);
 
-    void editPassword(EmailAndPasswordDto emailAndPassword, NewPasswordDto newPassword);
+    void editPassword(String email,String oldPassword, String newPassword);
 
-    Optional<WalletDto> findWallet(EmailAndPasswordDto request);
+    Optional<Wallet> findWallet(String email, String password);
 
     Customer findByEmail(String email) throws FieldNotFoundException;
 
-    Set<CustomerResultDto> findAll();
+    Set<Customer> findAll();
 }

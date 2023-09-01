@@ -12,13 +12,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Set<Order> findByCustomer(Customer customer);
 
-    Optional<Order> findByComment(Comment comment);
-
-/*
     @Query(value = "select o from Order o where o.customer = :customer and o.subDuty = :subDuty " +
             "and (o.status = 'WAITING_FOR_EXPERT_ADVICE' or o.status = 'WAITING_FOR_EXPERT_SELECTION') ")
-    Set<Order> findByCustomerAndSubDuty(Customer customer, SubDuty subDuty);
-*/
+    Set<Order> findByCustomerAndSubDuty(@Param(value = "") Customer customer, SubDuty subDuty);
 
     @Query(value = "select o from Order o where :expert member of o.subDuty.experts" +
             " and (o.status = 'WAITING_FOR_EXPERT_ADVICE' or o.status = 'WAITING_FOR_EXPERT_SELECTION')")

@@ -3,6 +3,7 @@ package com.example.home_service.entity;
 import com.example.home_service.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Where;
@@ -15,17 +16,14 @@ import org.hibernate.annotations.Where;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
-@Where(clause = "is_registered = true")
 public class Comment extends BaseEntity<Long> {
-    public static final String DEFAULT_DESCRIPTION = "not registered";
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     Integer point;
 
     @Column(nullable = false)
     String description ;
 
-    @Column(nullable = false)
-    Boolean isRegistered ;
-
+    @OneToOne
+    Order order;
 }

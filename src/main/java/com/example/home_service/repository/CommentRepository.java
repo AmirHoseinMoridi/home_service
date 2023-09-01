@@ -2,8 +2,15 @@ package com.example.home_service.repository;
 
 
 import com.example.home_service.entity.Comment;
+import com.example.home_service.entity.Expert;
+import com.example.home_service.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface CommentRepository extends JpaRepository<Comment,Long> {
-    //todo faze 2
+
+    Optional<Comment> findByOrder(Order order);
+
+  //  Double averagePointOfExpert(Expert expert);
 }

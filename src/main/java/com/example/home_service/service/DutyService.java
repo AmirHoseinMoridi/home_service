@@ -1,19 +1,18 @@
 package com.example.home_service.service;
 
 
-import com.example.home_service.dto.DutyDto;
 import com.example.home_service.entity.Duty;
 import com.example.home_service.exception.FieldNotFoundException;
 
 import java.util.Set;
 
 public interface DutyService {
-    Duty create(DutyDto dutyDTO);
-    Set<DutyDto> findAll();
+    void create(Duty duty);
+    Set<Duty> findAll();
 
     Duty findByName(String name) throws FieldNotFoundException;
 
-    void remove(DutyDto dutyDTO);
+    void remove(String dutyName);
 
     Long count();
 

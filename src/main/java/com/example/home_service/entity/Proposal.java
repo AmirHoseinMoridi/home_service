@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -26,12 +27,10 @@ public class Proposal extends BaseEntity<Long> {
     Double suggestedPriceByExpert;
 
     @Column( nullable = false)
-    LocalDate suggestedDate;
+    LocalDateTime suggestedDate;
 
     @Column( nullable = false)
     LocalTime durationOfWork;
-
-
 
     @Enumerated(value = EnumType.STRING)
     ProposalStatus status ;

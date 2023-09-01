@@ -12,6 +12,8 @@ import java.util.Set;
 
 public interface CustomerRepository extends JpaRepository<Customer,Long> {
 
+    boolean existsByEmail(String email);
+
     Set<Customer> findByFirstName(String firstName);
 
     Set<Customer> findByLastName(String lastName);

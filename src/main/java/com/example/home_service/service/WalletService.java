@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface WalletService {
     Wallet createWallet();
+
+    void update(Wallet wallet);
 }

@@ -14,6 +14,7 @@ import java.util.Set;
 
 public interface ExpertRepository extends JpaRepository<Expert,Long> {
 
+    boolean existsByEmail(String email);
     Set<Expert> findByFirstName(String firstName);
 
     Set<Expert> findByLastName(String lastName);

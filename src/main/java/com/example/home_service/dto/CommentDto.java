@@ -21,4 +21,6 @@ public class CommentDto {
     @Size(max = 1000, message = "description size is too long")
     String description;
 
+    Long orderId;
+
 }
