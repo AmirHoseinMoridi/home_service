@@ -14,5 +14,6 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Manager extends User {
+public class Manager
+        extends User {
 }

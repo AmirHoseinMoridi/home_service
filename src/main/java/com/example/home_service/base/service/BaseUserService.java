@@ -14,9 +14,6 @@ public interface BaseUserService<E extends User> {
 
     Optional<E> findByUsername(String username);
 
-   // AuthenticationResponse logIn(String username, String Password);
-    E findByUsernameAndPassword(String username, String Password) ;
-
     Optional<Wallet> findWallet(String username);
     Set<E> findAll();
     Long count();

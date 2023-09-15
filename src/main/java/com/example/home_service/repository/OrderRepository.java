@@ -10,13 +10,12 @@ import org.springframework.data.repository.query.Param;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
-public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
+public interface OrderRepository
+        extends JpaRepository<Order, Long>,
+        JpaSpecificationExecutor<Order> {
 
     Set<Order> findByCustomer(Customer customer);
 
-  /*  @Query(value = "select o from Order o where o.customer = :customer and o.subDuty = :subDuty " +
-            "and (o.status = 'WAITING_FOR_EXPERT_ADVICE' or o.status = 'WAITING_FOR_EXPERT_SELECTION') ")
-    Set<Order> findByCustomerAndSubDuty(@Param(value = "") Customer customer, SubDuty subDuty);*/
     @Query(value = "select o from Order o where :expert member of o.subDuty.experts" +
             " and (o.status = 'WAITING_FOR_EXPERT_ADVICE' or o.status = 'WAITING_FOR_EXPERT_SELECTION')")
     Set<Order> findByExpert(@Param(value = "expert") Expert expert);

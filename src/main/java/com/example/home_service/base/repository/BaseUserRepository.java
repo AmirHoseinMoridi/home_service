@@ -8,7 +8,9 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface BaseUserRepository <E extends User> extends JpaRepository<E,Long>, JpaSpecificationExecutor<E> {
+public interface BaseUserRepository <E extends User>
+        extends JpaRepository<E,Long>,
+        JpaSpecificationExecutor<E> {
 
     Optional<E> findByUsername(String username);
 

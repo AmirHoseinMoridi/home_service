@@ -1,6 +1,7 @@
 package com.example.home_service.exception;
 
-public class DutyOutOfRangeException extends RuntimeException{
+public class DutyOutOfRangeException
+        extends RuntimeException{
     public DutyOutOfRangeException() {
     }
 

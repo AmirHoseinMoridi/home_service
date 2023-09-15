@@ -14,7 +14,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Expert extends User {
+public class Expert
+        extends User {
     @OneToOne
     Image image;
 

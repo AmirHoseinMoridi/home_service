@@ -7,7 +7,8 @@ import com.example.home_service.entity.Image;
 
 import java.util.List;
 
-public interface ExpertService extends BaseUserService<Expert> {
+public interface ExpertService
+        extends BaseUserService<Expert> {
     void signUp(Expert expert, Image image);
 
     void editPassword(String username,String newPassword);

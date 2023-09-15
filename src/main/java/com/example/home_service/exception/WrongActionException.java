@@ -1,6 +1,7 @@
 package com.example.home_service.exception;
 
-public class WrongActionException extends RuntimeException{
+public class WrongActionException
+        extends RuntimeException{
     public WrongActionException() {
     }
 

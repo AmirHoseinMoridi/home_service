@@ -24,8 +24,8 @@ public class ProposalDto {
     @PositiveOrZero(message = "suggested_price_by_expert must be a positive number")
     Double suggestedPriceByExpert;
 
-   // @NotNull(message = "suggested_date is null!")
-   // @FutureOrPresent(message = "suggested date must be date in the future or present ")
+    @NotNull(message = "suggested_date is null!")
+    @FutureOrPresent(message = "suggested date must be date in the future or present ")
     ZonedDateTime suggestedDate;
 
     @NotNull(message = "duration_of_work id null!")

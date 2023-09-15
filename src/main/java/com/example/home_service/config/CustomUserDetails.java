@@ -1,6 +1,7 @@
 package com.example.home_service.config;
 
 import com.example.home_service.base.domain.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,14 +12,10 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
     public final User user;
-
-    public CustomUserDetails(User user) {
-        this.user = user;
-    }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

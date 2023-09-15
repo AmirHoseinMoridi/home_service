@@ -11,7 +11,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 import java.util.Set;
 
-public interface ProposalRepository extends JpaRepository<Proposal, Long> {
+public interface ProposalRepository
+        extends JpaRepository<Proposal, Long> {
 
 
     @Query(value = "select p from Proposal p where p.order.customer.id = :id and p.status = 'ACCEPTED'")
@@ -21,8 +22,6 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
 
 
     Set<Proposal> findByOrderId(Long order_id);
-
-    //Set<Proposal> findByOrderBySuggestedPriceByExpertDesc(Order order);
 
     @Query(value = "select p from Proposal p where p.order = :order order by p.expert.point asc ")
     Set<Proposal> findByOrderOrderByExpertPoint(@Param("order") Order order);

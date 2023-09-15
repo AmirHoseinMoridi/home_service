@@ -17,7 +17,8 @@ import org.hibernate.annotations.Where;
 
 @Entity
 @Where(clause = "is_active = true")
-public class AssignmentRequests extends BaseEntity<Long> {
+public class AssignmentRequests
+        extends BaseEntity<Long> {
 
     @Column(nullable = false)
     Boolean isActive;

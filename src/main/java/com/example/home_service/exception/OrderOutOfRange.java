@@ -1,6 +1,7 @@
 package com.example.home_service.exception;
 
-public class OrderOutOfRange extends RuntimeException {
+public class OrderOutOfRange
+        extends RuntimeException {
     public OrderOutOfRange() {
     }
 

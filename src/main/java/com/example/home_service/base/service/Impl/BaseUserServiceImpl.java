@@ -36,26 +36,6 @@ public class BaseUserServiceImpl<E extends User, R extends BaseUserRepository<E>
         return repository.findByUsername(username);
     }
 
-   /* @Override
-    public AuthenticationResponse logIn(String username, String password) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-        );
-
-        var user = repository.findByUsername(username)
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
-    }*/
-
-    @Override
-    public E findByUsernameAndPassword(String username, String password) {
-        return findByUsername(username)
-                .filter(e -> e.getPassword().equals(password))
-                .orElseThrow(() -> new WrongPasswordException("password is wrong !"));
-    }
 
     @Override
     public Optional<Wallet> findWallet(String username) {

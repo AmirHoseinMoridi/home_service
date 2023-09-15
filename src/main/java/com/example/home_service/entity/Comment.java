@@ -15,7 +15,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
-public class Comment extends BaseEntity<Long> {
+public class Comment
+        extends BaseEntity<Long> {
 
     @Column(nullable = false)
     Integer point;

@@ -5,6 +5,7 @@ import com.example.home_service.dto.result.ProposalResultDto;
 import com.example.home_service.entity.Proposal;
 import com.example.home_service.mapper.Mapper;
 import com.example.home_service.service.ServiceRegistry;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -17,14 +18,10 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/customer")
+@RequiredArgsConstructor
 public class CustomerController {
     private final ServiceRegistry serviceRegistry;
     private final Mapper mapper;
-
-    public CustomerController(ServiceRegistry serviceRegistry, Mapper mapper) {
-        this.serviceRegistry = serviceRegistry;
-        this.mapper = mapper;
-    }
 
 
     @PutMapping("/editPassword")

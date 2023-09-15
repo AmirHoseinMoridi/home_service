@@ -1,6 +1,7 @@
 package com.example.home_service.exception;
 
-public class NotActiveException extends RuntimeException {
+public class NotActiveException
+        extends RuntimeException {
     public NotActiveException() {
     }
 

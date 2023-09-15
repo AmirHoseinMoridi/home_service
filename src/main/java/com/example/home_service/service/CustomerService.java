@@ -7,11 +7,10 @@ import com.example.home_service.entity.Customer;
 import java.util.List;
 
 
-public interface CustomerService extends BaseUserService<Customer> {
+public interface CustomerService
+        extends BaseUserService<Customer> {
     void signUp(Customer customer);
 
     void editPassword(String username,String newPassword);
-
-
 
 }

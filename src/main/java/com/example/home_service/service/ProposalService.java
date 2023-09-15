@@ -14,10 +14,7 @@ import java.util.Set;
 public interface ProposalService {
     void add(String username, ProposalDto proposalDto);
 
-  //  Set<Proposal> findByOrderOrderBySuggestedPriceByExpertDesc(Order order);
-
     Set<Proposal> findByOrderId(Long order_id);
-    Set<Proposal> findByOrderOrderByExpertPoint(Order order);
 
     void select(Long proposalId);
 

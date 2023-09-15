@@ -6,6 +6,7 @@ import com.example.home_service.dto.result.OrderResultDto;
 import com.example.home_service.entity.Order;
 import com.example.home_service.mapper.Mapper;
 import com.example.home_service.service.ServiceRegistry;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -18,14 +19,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/expert")
+@RequiredArgsConstructor
 public class ExpertController {
     private final ServiceRegistry serviceRegistry;
     private final Mapper mapper;
 
-    public ExpertController(@Validated @RequestBody ServiceRegistry serviceRegistry, Mapper mapper) {
-        this.serviceRegistry = serviceRegistry;
-        this.mapper = mapper;
-    }
 
     @PutMapping("/editPassword")
     @PreAuthorize("hasRole('ROLE_ACCEPTED_EXPERT')")

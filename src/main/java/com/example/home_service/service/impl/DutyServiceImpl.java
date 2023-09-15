@@ -7,6 +7,7 @@ import com.example.home_service.exception.FieldNotFoundException;
 import com.example.home_service.repository.DutyRepository;
 import com.example.home_service.service.DutyService;
 import com.example.home_service.service.ServiceRegistry;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,16 +17,12 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
-
-public class DutyServiceImpl implements DutyService {
+@RequiredArgsConstructor
+public class DutyServiceImpl
+        implements DutyService {
     private final DutyRepository repository;
     private final ServiceRegistry serviceRegistry;
 
-    @Autowired
-    public DutyServiceImpl(DutyRepository repository, ServiceRegistry serviceRegistry) {
-        this.repository = repository;
-        this.serviceRegistry = serviceRegistry;
-    }
 
     @Transactional
     @Override

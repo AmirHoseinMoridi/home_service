@@ -15,7 +15,8 @@ import java.time.ZonedDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity<Long> {
+public class User
+        extends BaseEntity<Long> {
 
 
     @Column(name = "first_name", nullable = false)
@@ -45,9 +46,4 @@ public class User extends BaseEntity<Long> {
     @OneToOne(orphanRemoval = true)
     Wallet wallet;
 
-
-   /* @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }*/
 }

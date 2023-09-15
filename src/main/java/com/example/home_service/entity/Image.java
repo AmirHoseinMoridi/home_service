@@ -14,7 +14,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
-public class Image extends BaseEntity<Long> {
+public class Image
+        extends BaseEntity<Long> {
     @Column(length = 420000)
     String data;
 }

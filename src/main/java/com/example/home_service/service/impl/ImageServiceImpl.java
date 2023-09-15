@@ -10,6 +10,7 @@ import com.example.home_service.mapper.ImageMapperImpl;
 import com.example.home_service.repository.ImageRepository;
 import com.example.home_service.service.ImageService;
 import com.example.home_service.util.Checker;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +18,11 @@ import java.io.File;
 
 
 @Component
-public class ImageServiceImpl implements ImageService {
+@RequiredArgsConstructor
+public class ImageServiceImpl
+        implements ImageService {
     private final ImageRepository repository;
     private final ImageMapper imageMapper = new ImageMapperImpl();
-    @Autowired
-    public ImageServiceImpl(ImageRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public Image save(String imagePath)

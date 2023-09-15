@@ -17,7 +17,8 @@ import java.util.Set;
 
 @Entity
 @Where(clause = "is_active = true")
-public class SubDuty extends BaseEntity<Long> {
+public class SubDuty
+        extends BaseEntity<Long> {
 
 
     @Column( nullable = false)

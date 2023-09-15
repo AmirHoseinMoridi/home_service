@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
 
-public class ImageMapperImpl implements ImageMapper {
+public class ImageMapperImpl
+        implements ImageMapper {
 
     public String imageToImagePath(Image image) throws ImageNotFoundException {
         try {

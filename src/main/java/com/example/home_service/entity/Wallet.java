@@ -14,7 +14,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
-public class Wallet extends BaseEntity<Long> {
+public class Wallet
+        extends BaseEntity<Long> {
 
     @Column(nullable = false, scale = 1)
     Double balance;

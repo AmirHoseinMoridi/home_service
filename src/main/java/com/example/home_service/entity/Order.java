@@ -17,7 +17,8 @@ import java.time.ZonedDateTime;
 
 @Table(name = "orders")
 @Entity
-public class Order extends BaseEntity<Long> {
+public class Order
+        extends BaseEntity<Long> {
 
     @Column(nullable = false)
     String description;

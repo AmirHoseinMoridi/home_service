@@ -29,8 +29,8 @@ public class OrderDto {
     @PositiveOrZero(message = "suggested_price_by_customer must be a positive number")
     Double suggestedPriceByCustomer;
 
-   // @NotNull(message = "suggested_date_for_start_work is null !")
-  //  @FutureOrPresent(message = "suggested_date_for_start_work must be date in the future or present ")
+    @NotNull(message = "suggested_date_for_start_work is null !")
+    @FutureOrPresent(message = "suggested_date_for_start_work must be date in the future or present ")
     ZonedDateTime suggestedDateForStartWork;
 
     String address;

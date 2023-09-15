@@ -1,6 +1,7 @@
 package com.example.home_service.exception;
 
-public class NotValidException extends RuntimeException {
+public class NotValidException
+        extends RuntimeException {
     public NotValidException() {
     }
 

@@ -6,6 +6,7 @@ import com.example.home_service.exception.*;
 import com.example.home_service.repository.SubDutyRepository;
 import com.example.home_service.service.ServiceRegistry;
 import com.example.home_service.service.SubDutyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,15 +16,11 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class SubDutyServiceImpl implements SubDutyService {
     private final SubDutyRepository repository;
     private final ServiceRegistry serviceRegistry;
 
-    @Autowired
-    public SubDutyServiceImpl(SubDutyRepository repository, ServiceRegistry serviceRegistry) {
-        this.repository = repository;
-        this.serviceRegistry = serviceRegistry;
-    }
 
     @Transactional
     @Override

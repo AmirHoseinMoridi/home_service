@@ -13,6 +13,7 @@ import com.example.home_service.exception.OrderOutOfRange;
 import com.example.home_service.repository.ProposalRepository;
 import com.example.home_service.service.ProposalService;
 import com.example.home_service.service.ServiceRegistry;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +21,10 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class ProposalServiceImpl implements ProposalService {
     private final ProposalRepository repository;
     private final ServiceRegistry serviceRegistry;
-
-    public ProposalServiceImpl(ProposalRepository repository, ServiceRegistry serviceRegistry) {
-        this.repository = repository;
-        this.serviceRegistry = serviceRegistry;
-    }
 
     @Transactional
     @Override
@@ -65,15 +62,6 @@ public class ProposalServiceImpl implements ProposalService {
         return repository.findByOrderId(order_id);
     }
 
-  /*  @Override
-    public Set<Proposal> findByOrderOrderBySuggestedPriceByExpertDesc(Order order) {
-        return repository.findByOrderBySuggestedPriceByExpertDesc(order);
-    }*/
-
-    @Override
-    public Set<Proposal> findByOrderOrderByExpertPoint(Order order) {
-        return repository.findByOrderOrderByExpertPoint(order);
-    }
 
     @Transactional
     @Override

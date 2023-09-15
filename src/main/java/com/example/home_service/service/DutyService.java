@@ -10,7 +10,7 @@ public interface DutyService {
     void create(Duty duty);
     Set<Duty> findAll();
 
-    Duty findByName(String name) throws FieldNotFoundException;
+    Duty findByName(String name);
 
     void remove(String dutyName);
 

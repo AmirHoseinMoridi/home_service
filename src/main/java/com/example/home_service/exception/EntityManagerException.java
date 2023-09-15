@@ -1,6 +1,7 @@
 package com.example.home_service.exception;
 
-public class EntityManagerException extends RuntimeException {
+public class EntityManagerException
+        extends RuntimeException {
     public EntityManagerException() {
     }
 

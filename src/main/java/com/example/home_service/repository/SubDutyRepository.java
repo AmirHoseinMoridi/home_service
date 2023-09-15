@@ -10,7 +10,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 import java.util.Set;
 
-public interface SubDutyRepository extends JpaRepository<SubDuty,Long> {
+public interface SubDutyRepository
+        extends JpaRepository<SubDuty,Long> {
 
     Optional<SubDuty> findByName(String name);
     boolean existsByName(String name);

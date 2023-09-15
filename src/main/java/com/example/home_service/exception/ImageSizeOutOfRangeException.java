@@ -1,6 +1,7 @@
 package com.example.home_service.exception;
 
-public class ImageSizeOutOfRangeException extends RuntimeException {
+public class ImageSizeOutOfRangeException
+        extends RuntimeException {
     public ImageSizeOutOfRangeException() {
     }
 

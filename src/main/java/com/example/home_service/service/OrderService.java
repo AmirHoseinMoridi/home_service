@@ -21,7 +21,4 @@ public interface OrderService {
     void start(Long orderId);
     void done(CommentDto commentDto);
 
-    Set<Order> doAdvanceSearch(OrderSearchDto dto);
-
-
 }

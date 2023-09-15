@@ -17,7 +17,8 @@ import java.time.ZonedDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 @Entity
-public class Proposal extends BaseEntity<Long> {
+public class Proposal
+        extends BaseEntity<Long> {
 
     @Column( nullable = false)
     LocalDate dateOfCreate;
