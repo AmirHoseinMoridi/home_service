@@ -2,7 +2,6 @@ package com.example.home_service.repository;
 
 
 import com.example.home_service.entity.Comment;
-import com.example.home_service.entity.Expert;
 import com.example.home_service.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 

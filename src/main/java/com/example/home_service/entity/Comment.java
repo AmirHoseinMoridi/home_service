@@ -1,12 +1,11 @@
 package com.example.home_service.entity;
 
-import com.example.home_service.entity.base.BaseEntity;
+import com.example.home_service.base.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.Where;
 
 @Getter
 @Setter

@@ -6,7 +6,6 @@ import com.example.home_service.entity.Expert;
 import com.example.home_service.entity.SubDuty;
 import com.example.home_service.entity.enumaration.RequestAction;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.Set;
 

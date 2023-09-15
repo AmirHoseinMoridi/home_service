@@ -1,74 +1,69 @@
 package com.example.home_service.service.impl;
 
-
+import com.example.home_service.base.service.Impl.BaseUserServiceImpl;
+import com.example.home_service.dto.UserSearchDto;
 import com.example.home_service.entity.*;
-import com.example.home_service.entity.enumaration.ExpertStatus;
 import com.example.home_service.entity.enumaration.RequestAction;
-import com.example.home_service.exception.*;
+import com.example.home_service.entity.enumaration.Role;
+import com.example.home_service.exception.DutyOutOfRangeException;
+import com.example.home_service.exception.FieldAlreadyExistException;
+import com.example.home_service.exception.FieldNotFoundException;
 import com.example.home_service.repository.ExpertRepository;
 import com.example.home_service.service.ExpertService;
 import com.example.home_service.service.ServiceRegistry;
-import com.example.home_service.util.Checker;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Optional;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Component
-public class ExpertServiceImpl implements ExpertService {
+public class ExpertServiceImpl
+        extends BaseUserServiceImpl<Expert, ExpertRepository>
+        implements ExpertService{
 
-    private final ExpertRepository repository;
-    private final ServiceRegistry serviceRegistry;
 
-    @Autowired
-    public ExpertServiceImpl(ExpertRepository repository, ServiceRegistry serviceRegistry) {
-        this.repository = repository;
-        this.serviceRegistry = serviceRegistry;
+    public ExpertServiceImpl(ExpertRepository repository, PasswordEncoder passwordEncoder, ServiceRegistry serviceRegistry) {
+        super(repository, passwordEncoder, serviceRegistry);
     }
 
-    @Transactional
     @Override
-    public void signUp(Expert expert, Image image) {
-        if (repository.existsByEmail(expert.getEmail())) {
+    public void signUp(Expert expert,Image image) {
+        if (repository.existsByUsername(expert.getUsername())) {
             throw new FieldAlreadyExistException("this email is already exist !");
         }
-        Address address = serviceRegistry.addressService().save(expert.getAddress());
         Wallet wallet = serviceRegistry.walletService().createWallet();
-        Expert filledExpert = fillExpert(expert, image, address, wallet);
-        repository.save(filledExpert);
-    }
-
-
-    private Expert fillExpert(Expert expert, Image image, Address address, Wallet wallet) {
-        expert.setAddress(address);
-        expert.setImage(image);
         expert.setWallet(wallet);
-        expert.setStatus(ExpertStatus.AWAITING_CONFIRMATION);
-        expert.setDateOfSignUp(LocalDate.now());
-        expert.setPoint(0.0);
-        return expert;
-    }
-
-
-    @Transactional
-    @Override
-    public void editPassword(String email, String oldPassword, String newPassword) {
-        Expert expert = findByEmailAndPassword(email, oldPassword);
-        expert.setPassword(newPassword);
+        expert.setDateOfSignUp(ZonedDateTime.now());
+        expert.setImage(image);
+        String password = expert.getPassword();
+        expert.setPassword(passwordEncoder.encode(password));
+        expert.setRole(Role.ROLE_NON_ACCEPTED_EXPERT);
+        expert.setPoint(5D);
         repository.save(expert);
     }
 
 
-    @Transactional
     @Override
-    public void addingSubDutyRequest(String email, String password, String subDutyName) {
+    public void editPassword(String username, String newPassword) {
+        Expert expert = repository.findByUsername(username)
+                .orElseThrow(()->new FieldNotFoundException("expert not found !"));
+        expert.setPassword(passwordEncoder.encode(newPassword));
+        repository.save(expert);
+    }
 
-        Expert expert = findByEmailAndPassword(email, password);
-        Checker.checkExpertsAccess(expert);
+    @Override
+    public void addingSubDutyRequest(String username, String subDutyName) {
+
+        Expert expert = repository.findByUsername(username)
+                .orElseThrow(()->new FieldNotFoundException("expert not found !"));
 
         SubDuty subDuty = serviceRegistry.subDutyService().findByName(subDutyName);
         checkRangeOfDuty(expert, subDuty);
@@ -86,91 +81,8 @@ public class ExpertServiceImpl implements ExpertService {
         }
     }
 
-    @Transactional
-    @Override
-    public void removingSubDutyRequest(String email, String password, String subDutyName) {
 
-        Expert expert = findByEmailAndPassword(email, password);
-        Checker.checkExpertsAccess(expert);
-        SubDuty subDuty = serviceRegistry.subDutyService().findByName(subDutyName);
-        Set<SubDuty> expertsSubDuties = serviceRegistry.subDutyService().findByExpert(expert);
-
-        if (expertsSubDuties.contains(subDuty)) {
-            createAssignmentRequest(expert, subDuty, RequestAction.REMOVE);
-        } else throw new FieldNotFoundException("this sub duty is not exists in expert's sub duties !");
-
-    }
-
-    @Override
-    public Optional<Wallet> findWallet(String email, String password) {
-        Expert expert = findByEmailAndPassword(email, password);
-        return Optional.ofNullable(expert.getWallet());
-    }
-
-
-    @Override
-    public Set<Expert> findAll() throws ImageNotFoundException {
-        return new HashSet<>(repository.findAll());
-    }
-
-    @Override
-    public void subtractPoint(Expert expert, int subtract) {
-        Double oldPoint = expert.getPoint();
-        expert.setPoint(oldPoint - subtract);
-        if (expert.getPoint() < 0) {
-            expert.setStatus(ExpertStatus.AWAITING_CONFIRMATION);
-        }
-        repository.save(expert);
-    }
-
-
-/*    @Override
-    public Set<ExpertResultDto> findByStatus(ExpertStatus expertStatus) {
-        try {
-            Set<ExpertResultDto> responses = new HashSet<>();
-            repository.findByStatus(expertStatus).forEach(
-                    expert -> responses.add(mapper.expertToDto(expert))
-            );
-            return responses;
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return new HashSet<>();
-        }
-    }*/
-
-
-    @Transactional
-    @Override
-    public void acceptExpert(String expertEmail) {
-        Expert expert = findByEmailOrThrowException(expertEmail);
-        expert.setStatus(ExpertStatus.ACCEPTED);
-        repository.save(expert);
-    }
-
-
-    public Expert findByEmailAndPassword(String email, String password)
-            throws FieldNotFoundException, WrongPasswordException {
-
-        Expert expert = findByEmailOrThrowException(email);
-
-        return Optional.of(expert)
-                .filter(e -> e.getPassword().equals(password))
-                .orElseThrow(() -> new WrongPasswordException("password is wrong !"));
-    }
-
-    @Override
-    public Long count() {
-        return repository.count();
-    }
-
-
-    private Expert findByEmailOrThrowException(String email) {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new FieldNotFoundException("expert is not exists!"));
-    }
-
-    private void createAssignmentRequest(Expert expert, SubDuty subDuty, RequestAction action)
-            throws FieldAlreadyExistException {
+    private void createAssignmentRequest(Expert expert, SubDuty subDuty, RequestAction action) {
         AssignmentRequests assignmentRequests = AssignmentRequests.builder()
                 .expert(expert)
                 .subDuty(subDuty)
@@ -179,4 +91,46 @@ public class ExpertServiceImpl implements ExpertService {
                 .build();
         serviceRegistry.assignmentRequestsService().save(assignmentRequests);
     }
+
+    @Override
+    public void removingSubDutyRequest(String username, String subDutyName) {
+
+        Expert expert = repository.findByUsername(username)
+                .orElseThrow(()->new FieldNotFoundException("expert not found !"));
+
+        SubDuty subDuty = serviceRegistry.subDutyService().findByName(subDutyName);
+        Set<SubDuty> expertsSubDuties = serviceRegistry.subDutyService().findByExpert(expert);
+
+        if (expertsSubDuties.contains(subDuty)) {
+            createAssignmentRequest(expert, subDuty, RequestAction.REMOVE);
+        } else throw new FieldNotFoundException("this sub duty is not exists in expert's sub duties !");
+    }
+
+    @Override
+    public void subtractPoint(Expert expert, int subtract) {
+        Double oldPoint = expert.getPoint();
+        expert.setPoint(oldPoint - subtract);
+        if (expert.getPoint() < 0) {
+            expert.setRole(Role.ROLE_NON_ACCEPTED_EXPERT);
+        }
+        repository.save(expert);
+    }
+
+    @Override
+    public void addPoint(Expert expert, int point) {
+        expert.setPoint((double) point);
+        repository.save(expert);
+    }
+
+    @Override
+    public void acceptExpert(Long expertId) {
+        Expert expert = findById(expertId);
+        expert.setRole(Role.ROLE_ACCEPTED_EXPERT);
+        repository.save(expert);
+    }
+    @Override
+    public Double showPoint(Long expertId) {
+        return findById(expertId).getPoint();
+    }
+
 }

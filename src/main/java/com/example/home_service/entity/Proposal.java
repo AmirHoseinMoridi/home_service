@@ -1,14 +1,13 @@
 package com.example.home_service.entity;
 
-import com.example.home_service.entity.base.BaseEntity;
+import com.example.home_service.base.domain.BaseEntity;
 import com.example.home_service.entity.enumaration.ProposalStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -27,10 +26,10 @@ public class Proposal extends BaseEntity<Long> {
     Double suggestedPriceByExpert;
 
     @Column( nullable = false)
-    LocalDateTime suggestedDate;
+    ZonedDateTime suggestedDate;
 
     @Column( nullable = false)
-    LocalTime durationOfWork;
+    ZonedDateTime durationOfWork;
 
     @Enumerated(value = EnumType.STRING)
     ProposalStatus status ;

@@ -1,21 +1,17 @@
 package com.example.home_service.entity;
 
-import com.example.home_service.entity.base.Person;
+import com.example.home_service.base.domain.User;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
 @Entity
-public class Customer extends Person {
-
-    @OneToOne(orphanRemoval = true)
-    Wallet wallet;
+public class Customer extends User {
 }

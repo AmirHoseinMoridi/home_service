@@ -1,13 +1,12 @@
 package com.example.home_service.entity;
 
-import com.example.home_service.entity.base.BaseEntity;
+import com.example.home_service.base.domain.BaseEntity;
 import com.example.home_service.entity.enumaration.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -25,7 +24,9 @@ public class Order extends BaseEntity<Long> {
 
     Double suggestedPriceByCustomer;
 
-    LocalDateTime suggestedDateForStartWork;
+    ZonedDateTime suggestedDateForStartWork;
+
+    String address;
 
     @Enumerated(value = EnumType.STRING)
     OrderStatus status;
@@ -35,8 +36,5 @@ public class Order extends BaseEntity<Long> {
 
     @ManyToOne
     SubDuty subDuty;
-
-    @ManyToOne
-    Address address;
 
 }

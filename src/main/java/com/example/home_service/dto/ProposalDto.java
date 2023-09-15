@@ -9,6 +9,8 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
+
 @ToString
 @Getter
 @Setter
@@ -22,12 +24,13 @@ public class ProposalDto {
     @PositiveOrZero(message = "suggested_price_by_expert must be a positive number")
     Double suggestedPriceByExpert;
 
-    @NotNull(message = "suggested_date is null!")
-    @FutureOrPresent(message = "suggested date must be date in the future or present ")
-    LocalDateTime suggestedDate;
+   // @NotNull(message = "suggested_date is null!")
+   // @FutureOrPresent(message = "suggested date must be date in the future or present ")
+    ZonedDateTime suggestedDate;
 
     @NotNull(message = "duration_of_work id null!")
-    LocalTime durationOfWork;
+    ZonedDateTime durationOfWork;
 
+    @NotNull(message = "duration_of_work id null!")
     Long orderId;
 }

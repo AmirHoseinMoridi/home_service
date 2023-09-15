@@ -1,7 +1,5 @@
 package com.example.home_service.util;
 
-import com.example.home_service.entity.Expert;
-import com.example.home_service.entity.enumaration.ExpertStatus;
 import com.example.home_service.exception.ExpertAccessException;
 import com.example.home_service.exception.ImageNotFoundException;
 import com.example.home_service.exception.ImageSizeOutOfRangeException;
@@ -50,12 +48,6 @@ public class Checker {
             }
         } catch (IOException io) {
             throw new ImageNotFoundException("can not find image file !");
-        }
-    }
-
-    public static void checkExpertsAccess(Expert expert) throws ExpertAccessException {
-        if (!expert.getStatus().equals(ExpertStatus.ACCEPTED)){
-            throw new ExpertAccessException("expert has not access to this item !");
         }
     }
 }

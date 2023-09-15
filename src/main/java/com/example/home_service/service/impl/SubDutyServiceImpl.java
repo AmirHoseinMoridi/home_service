@@ -1,9 +1,6 @@
 package com.example.home_service.service.impl;
 
-import com.example.home_service.entity.AssignmentRequests;
-import com.example.home_service.entity.Duty;
-import com.example.home_service.entity.Expert;
-import com.example.home_service.entity.SubDuty;
+import com.example.home_service.entity.*;
 import com.example.home_service.entity.enumaration.RequestAction;
 import com.example.home_service.exception.*;
 import com.example.home_service.repository.SubDutyRepository;
@@ -52,7 +49,7 @@ public class SubDutyServiceImpl implements SubDutyService {
         SubDuty finedSubDuty = findByName(subDuty.getName());
         finedSubDuty.setPrice(subDuty.getPrice());
         finedSubDuty.setDescription(subDuty.getDescription());
-        repository.save(subDuty);
+        repository.save(finedSubDuty);
     }
 
 
@@ -96,6 +93,11 @@ public class SubDutyServiceImpl implements SubDutyService {
     @Override
     public Set<SubDuty> findAll() {
         return new HashSet<>(repository.findAll());
+    }
+
+    @Override
+    public SubDuty findById(Long id) {
+        return repository.findById(id).orElseThrow();
     }
 
 

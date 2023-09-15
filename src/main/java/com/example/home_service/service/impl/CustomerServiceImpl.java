@@ -1,85 +1,58 @@
 package com.example.home_service.service.impl;
 
-import com.example.home_service.entity.Address;
+import com.example.home_service.base.service.Impl.BaseUserServiceImpl;
+import com.example.home_service.dto.UserSearchDto;
 import com.example.home_service.entity.Customer;
 import com.example.home_service.entity.Wallet;
+import com.example.home_service.entity.enumaration.Role;
 import com.example.home_service.exception.FieldAlreadyExistException;
 import com.example.home_service.exception.FieldNotFoundException;
-import com.example.home_service.exception.WrongPasswordException;
 import com.example.home_service.repository.CustomerRepository;
 import com.example.home_service.service.CustomerService;
 import com.example.home_service.service.ServiceRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
-public class CustomerServiceImpl implements CustomerService {
+public class CustomerServiceImpl
+        extends BaseUserServiceImpl<Customer, CustomerRepository>
+        implements CustomerService {
 
 
-    private final CustomerRepository repository;
-    private final ServiceRegistry serviceRegistry;
-
-    @Autowired
-    public CustomerServiceImpl(CustomerRepository repository, ServiceRegistry serviceRegistry) {
-        this.repository = repository;
-        this.serviceRegistry = serviceRegistry;
+    public CustomerServiceImpl(CustomerRepository repository, PasswordEncoder passwordEncoder, ServiceRegistry serviceRegistry) {
+        super(repository, passwordEncoder, serviceRegistry);
     }
 
-    @Transactional
     @Override
     public void signUp(Customer customer) {
-        if (repository.existsByEmail(customer.getEmail())) {
+        if (repository.existsByUsername(customer.getUsername())) {
             throw new FieldAlreadyExistException("this email is already exist !");
         }
-
-        Address address = serviceRegistry.addressService().save(customer.getAddress());
         Wallet wallet = serviceRegistry.walletService().createWallet();
-
         customer.setWallet(wallet);
-        customer.setDateOfSignUp(LocalDate.now());
-        customer.setAddress(address);
+        customer.setDateOfSignUp(ZonedDateTime.now());
+        String password = customer.getPassword();
+        customer.setPassword(passwordEncoder.encode(password));
+        customer.setRole(Role.ROLE_CUSTOMER);
+        repository.save(customer);
 
+    }
+
+    @Override
+    public void editPassword(String username, String newPassword) {
+        Customer customer = repository.findByUsername(username)
+                .orElseThrow(() -> new FieldNotFoundException("customer not found !"));
+        customer.setPassword(passwordEncoder.encode(newPassword));
         repository.save(customer);
     }
 
-
-    @Transactional()
-    @Override
-    public void editPassword(String email, String oldPassword, String newPassword) {
-        Customer customer = findByEmailAndPassword(email, oldPassword);
-        customer.setPassword(newPassword);
-        repository.save(customer);
-    }
-
-    @Override
-    public Optional<Wallet> findWallet(String email, String password) {
-        Customer customer = findByEmailAndPassword(email, password);
-        return Optional.ofNullable(customer.getWallet());
-    }
-
-    @Override
-    public Customer findByEmail(String email) {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new FieldNotFoundException("customer is not exists !"));
-    }
-
-    @Override
-    public Set<Customer> findAll() {
-        return new HashSet<>(repository.findAll());
-    }
-
-    private Customer findByEmailAndPassword(String email, String password){
-
-        Customer customer = findByEmail(email);
-        if (!customer.getPassword().equals(password)) {
-            throw new WrongPasswordException("password is wrong !");
-        }
-        return customer;
-    }
 }

@@ -1,7 +1,6 @@
 package com.example.home_service.service.impl;
 
 
-import com.example.home_service.dto.ImageDto;
 import com.example.home_service.entity.Image;
 import com.example.home_service.exception.ImageNotFoundException;
 import com.example.home_service.exception.ImageSizeOutOfRangeException;
@@ -27,11 +26,10 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image save(ImageDto request)
+    public Image save(String imagePath)
             throws NotValidException, ImageNotFoundException, ImageSizeOutOfRangeException {
 
-        File imageFile = imageMapper.paramToImageFile(request);
-        Checker.checkValidation(request);
+        File imageFile = imageMapper.paramToImageFile(imagePath);
         Checker.checkFileExist(imageFile);
         Checker.checkImageSize(imageFile);
 

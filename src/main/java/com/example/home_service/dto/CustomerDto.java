@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
 @ToString
 @Getter
 @Setter
@@ -12,8 +13,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CustomerRequestDto {
-
+public class CustomerDto {
     @NotBlank(message = "first name is not valid !")
     @Pattern(regexp = Regex.STRING_WITHOUT_NUMBER, message = "firs name is not valid !")
     String firstName;
@@ -21,6 +21,9 @@ public class CustomerRequestDto {
     @NotBlank(message = "last name is not valid !")
     @Pattern(regexp = Regex.STRING_WITHOUT_NUMBER, message = "last name can't has any number")
     String lastName;
+
+    @NotBlank(message = "username is not valid !")
+    String username;
 
     @NotBlank(message = "email is not valid !")
     @Pattern(regexp = Regex.EMAIL, message = "email is not valid!")
@@ -30,5 +33,6 @@ public class CustomerRequestDto {
     @Pattern(regexp = Regex.EIGHT_CHARACTERS_WITH_LETTERS_AND_NUMBERS, message = "password is not valid")
     String password;
 
-    AddressDto address;
+    @NotBlank(message = "address is not valid !")
+    String address;
 }

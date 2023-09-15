@@ -1,10 +1,9 @@
 package com.example.home_service.dto.result;
 
-import com.example.home_service.dto.AddressDto;
-import com.example.home_service.entity.enumaration.ExpertStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @ToString
@@ -19,8 +18,6 @@ public class ExpertResultDto {
     String lastName;
     String email;
     LocalDate dateOfSignUp;
-    AddressDto address;
-    ExpertStatus status;
+    String address;
     Double point;
-    String imagePath;
 }

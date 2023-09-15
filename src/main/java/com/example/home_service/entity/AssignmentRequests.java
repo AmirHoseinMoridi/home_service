@@ -1,6 +1,6 @@
 package com.example.home_service.entity;
 
-import com.example.home_service.entity.base.BaseEntity;
+import com.example.home_service.base.domain.BaseEntity;
 import com.example.home_service.entity.enumaration.RequestAction;
 import jakarta.persistence.*;
 import lombok.*;

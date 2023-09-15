@@ -14,14 +14,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NewPasswordDto {
 
-    @NotBlank(message = "email is not valid !")
-    @Pattern(regexp = Regex.EMAIL, message = "email is not valid!")
-    String email;
-
-    @NotBlank(message = "password is not valid !")
-    @Pattern(regexp = Regex.EIGHT_CHARACTERS_WITH_LETTERS_AND_NUMBERS, message = "password is not valid")
-    String password;
-
     @NotBlank(message = "new password is not valid !")
     @Pattern(regexp = Regex.EIGHT_CHARACTERS_WITH_LETTERS_AND_NUMBERS, message = "password is not valid")
     String newPassword;

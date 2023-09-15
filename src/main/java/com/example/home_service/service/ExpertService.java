@@ -1,43 +1,26 @@
 package com.example.home_service.service;
 
-import com.example.home_service.dto.result.ExpertResultDto;
+import com.example.home_service.base.service.BaseUserService;
+import com.example.home_service.dto.UserSearchDto;
 import com.example.home_service.entity.Expert;
 import com.example.home_service.entity.Image;
-import com.example.home_service.entity.Wallet;
-import com.example.home_service.entity.enumaration.ExpertStatus;
-import com.example.home_service.exception.FieldNotFoundException;
-import com.example.home_service.exception.ImageNotFoundException;
-import com.example.home_service.exception.WrongPasswordException;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 
-
-
-public interface ExpertService {
+public interface ExpertService extends BaseUserService<Expert> {
     void signUp(Expert expert, Image image);
 
-    void editPassword(String email,String oldPassword, String newPassword);
-    void addingSubDutyRequest(String email,String password, String subDutyName);
-    void removingSubDutyRequest(String email,String password, String subDutyName);
+    void editPassword(String username,String newPassword);
+    void addingSubDutyRequest(String username, String subDutyName);
 
-    Optional<Wallet> findWallet(String email, String password);
+    void removingSubDutyRequest(String username, String subDutyName);
 
-    Set<Expert> findAll() throws ImageNotFoundException;
+    void subtractPoint(Expert expert, int subtract);
 
-  //  Set<ExpertResultDto> findByStatus(ExpertStatus expertStatus);
+    void addPoint(Expert expert, int point);
 
+    void acceptExpert(Long expertId);
 
-    void subtractPoint(Expert expert,int subtract);
-
-    void acceptExpert(String expertEmail);
-
-
-    Expert findByEmailAndPassword(String email,String Password) throws FieldNotFoundException, WrongPasswordException;
-
-    Long count();
-
-
-
+    Double showPoint(Long expertId);
 
 }

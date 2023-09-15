@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-<!-- ... (previous code) ... -->
 
 <div class="container mt-5">
     <div class="card">
@@ -38,7 +37,6 @@
     </div>
 </div>
 
-<!-- ... (rest of the code) ... -->
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
@@ -53,7 +51,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/your-spring-endpoint',
+                url: '/customer/payment/CreditCard',
                 data: {
                     cardNumber: cardNumber,
                     cvv2: cvv2,

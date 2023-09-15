@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
 @Builder
 @Getter
 @Setter
@@ -27,5 +29,5 @@ public class CreditCardDto {
     String cvv2;
 
     @PastOrPresent(message = "Expiration date is not valid !")
-    LocalDate ExpirationDate;
+    ZonedDateTime ExpirationDate;
 }

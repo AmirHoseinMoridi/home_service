@@ -17,12 +17,11 @@ import java.util.Optional;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository repository;
-    private final ServiceRegistry serviceRegistry;
+
 
     @Autowired
-    public CommentServiceImpl(CommentRepository repository, ServiceRegistry serviceRegistry) {
+    public CommentServiceImpl(CommentRepository repository) {
         this.repository = repository;
-        this.serviceRegistry = serviceRegistry;
     }
 
     @Override

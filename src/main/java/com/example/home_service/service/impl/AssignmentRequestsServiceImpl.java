@@ -1,6 +1,7 @@
 package com.example.home_service.service.impl;
 
 
+import com.example.home_service.base.util.SecurityUtil;
 import com.example.home_service.entity.AssignmentRequests;
 import com.example.home_service.entity.Expert;
 import com.example.home_service.entity.SubDuty;
@@ -29,7 +30,7 @@ public class AssignmentRequestsServiceImpl implements AssignmentRequestsService 
     }
 
     @Override
-    public void save(AssignmentRequests assignmentRequests) throws FieldAlreadyExistException {
+    public void save(AssignmentRequests assignmentRequests)  {
         Expert expert = assignmentRequests.getExpert();
         SubDuty subDuty = assignmentRequests.getSubDuty();
         RequestAction action = assignmentRequests.getAction();

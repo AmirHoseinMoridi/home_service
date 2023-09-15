@@ -13,7 +13,6 @@ import com.example.home_service.exception.OrderOutOfRange;
 import com.example.home_service.repository.ProposalRepository;
 import com.example.home_service.service.ProposalService;
 import com.example.home_service.service.ServiceRegistry;
-import com.example.home_service.util.Checker;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,17 +31,16 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Transactional
     @Override
-    public void add(String email, String password, ProposalDto proposalDto) {
+    public void add(String username, ProposalDto proposalDto) {
 
         Order order = serviceRegistry.orderService().findById(proposalDto.getOrderId());
         if (order.getSuggestedPriceByCustomer() >= proposalDto.getSuggestedPriceByExpert()) {
             throw new NotValidException("Suggested-Price-By-Expert must to be higher than Suggested-Price-By-Customer");
         }
-        if (proposalDto.getSuggestedDate().isBefore(order.getSuggestedDateForStartWork())) {
-            throw new NotValidException("suggested date in proposal is not valid !");
-        }
-        Expert expert = serviceRegistry.expertService().findByEmailAndPassword(email, password);
-        Checker.checkExpertsAccess(expert);
+
+        Expert expert = serviceRegistry.expertService().findByUsername(username)
+                .orElseThrow(() -> new FieldNotFoundException("expert not found !"));
+
         Set<SubDuty> subDuties = serviceRegistry.subDutyService().findByExpert(expert);
         if (!subDuties.contains(order.getSubDuty())) {
             throw new OrderOutOfRange("this order is not in expert's duty range !");
@@ -60,6 +58,11 @@ public class ProposalServiceImpl implements ProposalService {
                 .build();
         repository.save(proposal);
 
+    }
+
+    @Override
+    public Set<Proposal> findByOrderId(Long order_id) {
+        return repository.findByOrderId(order_id);
     }
 
   /*  @Override
@@ -97,8 +100,9 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public void paymentWithWallet(Long proposalId) {
         Proposal proposal = findById(proposalId);
-        Wallet wallet = proposal.getOrder().getCustomer().getWallet();
-        Double balance = wallet.getBalance();
+        Wallet customerWallet = proposal.getOrder().getCustomer().getWallet();
+        Wallet expertWallet = proposal.getExpert().getWallet();
+        Double balance = customerWallet.getBalance();
         if (balance < proposal.getSuggestedPriceByExpert()) {
             throw new InsufficientInventoryException("Insufficient is inventory");
         }
@@ -106,7 +110,11 @@ public class ProposalServiceImpl implements ProposalService {
                 balance - proposal.getSuggestedPriceByExpert()
         );
 
-        serviceRegistry.walletService().update(wallet);
+        double add = proposal.getSuggestedPriceByExpert() * 0.7;
+        Double expertWalletBalance = expertWallet.getBalance();
+        expertWallet.setBalance(expertWalletBalance + add);
+        serviceRegistry.walletService().update(customerWallet);
+        serviceRegistry.walletService().update(expertWallet);
 
     }
 
@@ -117,6 +125,16 @@ public class ProposalServiceImpl implements ProposalService {
         Double balance = wallet.getBalance();
         wallet.setBalance(balance + proposal.getSuggestedPriceByExpert());
         serviceRegistry.walletService().update(wallet);
+    }
+
+    @Override
+    public Set<Proposal> findByCustomerId(Long id) {
+        return repository.findByCustomerId(id);
+    }
+
+    @Override
+    public Set<Proposal> findByExpert(Long id) {
+        return repository.findByExpertId(id);
     }
 
     private Proposal findById(Long id) {

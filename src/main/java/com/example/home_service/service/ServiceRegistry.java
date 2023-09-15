@@ -11,78 +11,75 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServiceRegistry {
 
-    AddressService addressService;
     DutyService dutyService;
     ImageService imageService;
     OrderService orderService;
     SubDutyService subDutyService;
     WalletService walletService;
-    CustomerService customerService;
     ExpertService expertService;
+    CustomerService customerService;
     CommentService commentService;
     ProposalService proposalService;
     AssignmentRequestsService assignmentRequestsService;
 
     @Autowired
-    public ServiceRegistry(@Lazy AddressService addressService, @Lazy DutyService dutyService,
-                           @Lazy ImageService imageService, @Lazy OrderService orderService,
-                           @Lazy SubDutyService subDutyService, @Lazy WalletService walletService,
-                           @Lazy CustomerService customerService, @Lazy ExpertService expertService,
-                           @Lazy CommentService commentService, @Lazy ProposalService proposalService,
-                           @Lazy AssignmentRequestsService assignmentRequestsService) {
-        this.addressService = addressService;
+    @Lazy
+    public ServiceRegistry(DutyService dutyService, ExpertService expertService,
+                           ImageService imageService, OrderService orderService,
+                           SubDutyService subDutyService, WalletService walletService,
+                           CustomerService customerService, CommentService commentService, ProposalService proposalService,
+                           AssignmentRequestsService assignmentRequestsService) {
+        this.expertService = expertService;
         this.dutyService = dutyService;
         this.imageService = imageService;
         this.orderService = orderService;
         this.subDutyService = subDutyService;
         this.walletService = walletService;
         this.customerService = customerService;
-        this.expertService = expertService;
         this.commentService = commentService;
         this.proposalService = proposalService;
         this.assignmentRequestsService = assignmentRequestsService;
     }
 
-    public  AddressService addressService() {
-        return addressService;
-    }
 
-    public  DutyService dutyService() {
+
+    public DutyService dutyService() {
         return dutyService;
     }
 
-    public  ImageService imageService() {
+    public ImageService imageService() {
         return imageService;
     }
 
-    public  OrderService orderService() {
+    public OrderService orderService() {
         return orderService;
     }
 
-    public  SubDutyService subDutyService() {
+    public SubDutyService subDutyService() {
         return subDutyService;
     }
 
-    public  WalletService walletService() {
+    public WalletService walletService() {
         return walletService;
     }
 
-    public  CustomerService customerService() {
-        return customerService;
-    }
-
-    public  ExpertService expertService() {
+    public ExpertService expertService(){
         return expertService;
     }
 
-    public  CommentService commentService() {
+    public CustomerService customerService(){
+        return customerService;
+    }
+
+    public CommentService commentService() {
         return commentService;
     }
-    public ProposalService proposalService(){
+
+    public ProposalService proposalService() {
         return proposalService;
     }
 
-    public  AssignmentRequestsService assignmentRequestsService() {
+    public AssignmentRequestsService assignmentRequestsService() {
         return assignmentRequestsService;
     }
 }

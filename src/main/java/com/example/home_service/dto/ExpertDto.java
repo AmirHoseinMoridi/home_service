@@ -8,10 +8,11 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ExpertRequestDto{
+public class ExpertDto {
 
     @NotBlank(message = "first name is not valid !")
     @Pattern(regexp = Regex.STRING_WITHOUT_NUMBER, message = "firs name is not valid !")
@@ -21,15 +22,21 @@ public class ExpertRequestDto{
     @Pattern(regexp = Regex.STRING_WITHOUT_NUMBER, message = "last name can't has any number")
     String lastName;
 
+    @NotBlank(message = "username is not valid !")
+    String username;
+
     @NotBlank(message = "email is not valid !")
-    @Pattern(regexp = Regex.EMAIL, message = "email is not valid !")
+    @Pattern(regexp = Regex.EMAIL, message = "email is not valid!")
     String email;
 
     @NotBlank(message = "password is not valid !")
-    @Pattern(regexp = Regex.EIGHT_CHARACTERS_WITH_LETTERS_AND_NUMBERS, message = "password is not valid !")
+    @Pattern(regexp = Regex.EIGHT_CHARACTERS_WITH_LETTERS_AND_NUMBERS, message = "password is not valid")
     String password;
 
-    AddressDto address;
+    @NotBlank(message = "address is not valid !")
+    String address;
 
-    ImageDto imageDTO;
+    @NotBlank(message = "image path not valid !")
+    @Pattern(regexp = Regex.IMAGE_JPG, message = "image path not valid !")
+    String imagePath;
 }

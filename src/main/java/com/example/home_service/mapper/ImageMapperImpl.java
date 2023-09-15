@@ -1,7 +1,6 @@
 package com.example.home_service.mapper;
 
 
-import com.example.home_service.dto.ImageDto;
 import com.example.home_service.entity.Image;
 import com.example.home_service.exception.ImageNotFoundException;
 
@@ -35,8 +34,8 @@ public class ImageMapperImpl implements ImageMapper {
 
     }
 
-    public File paramToImageFile(ImageDto request) {
-        return new File(request.getImagePath());
+    public File paramToImageFile(String imagePath) {
+        return new File(imagePath);
     }
 
     public Image imageFileToImage(File imageFile) throws ImageNotFoundException {

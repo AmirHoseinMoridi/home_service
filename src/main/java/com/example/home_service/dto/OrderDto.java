@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @ToString
 @Getter
@@ -16,10 +17,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderDto {
-
-    @NotBlank(message = "email is not valid !")
-    @Pattern(regexp = Regex.EMAIL, message = "email is not valid!")
-    String customerEmail;
 
     @NotBlank(message = "sub duty name not valid !")
     @Pattern(regexp = Regex.STRING_WITHOUT_NUMBER, message = "sub duty name is not valid !")
@@ -32,9 +29,9 @@ public class OrderDto {
     @PositiveOrZero(message = "suggested_price_by_customer must be a positive number")
     Double suggestedPriceByCustomer;
 
-    @NotNull(message = "suggested_date_for_start_work is null !")
-    @FutureOrPresent(message = "suggested_date_for_start_work must be date in the future or present ")
-    LocalDateTime suggestedDateForStartWork;
+   // @NotNull(message = "suggested_date_for_start_work is null !")
+  //  @FutureOrPresent(message = "suggested_date_for_start_work must be date in the future or present ")
+    ZonedDateTime suggestedDateForStartWork;
 
-    AddressDto addressDto;
+    String address;
 }

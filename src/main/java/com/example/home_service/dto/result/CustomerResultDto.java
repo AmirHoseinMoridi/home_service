@@ -1,6 +1,5 @@
 package com.example.home_service.dto.result;
 
-import com.example.home_service.dto.AddressDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,5 +16,5 @@ public class CustomerResultDto {
     String lastName;
     String email;
     LocalDate dateOfSignUp;
-    AddressDto address;
+    String address;
 }
